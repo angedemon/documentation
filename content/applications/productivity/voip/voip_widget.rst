@@ -74,6 +74,9 @@ screen.
    accessed by navigating to `https://manage.axivox.com/ <https://manage.axivox.com/>`_. After
    logging into the portal, go to :menuselection:`Users --> Outgoing number` (column).
 
+.. seealso::
+   :doc:`sales_calls`
+
 Send an email through the VoIP widget
 =====================================
 
