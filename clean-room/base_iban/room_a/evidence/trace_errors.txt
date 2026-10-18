@@ -1,0 +1,12 @@
+# Exact exception type and message text (repr) per error class
+''                             EXC ValidationError: 'There is no IBAN code.'
+'US00'                         EXC ValidationError: 'The IBAN is invalid, it should begin with the country code'
+'BE00'                         EXC ValidationError: 'The IBAN does not seem to be correct. You should have entered something like this BEkk BBBC CCCC CCXX\nWhere B = National bank code, S = Branch code, C = Account No, k = Check digit'
+'BE0000000000000é'             EXC ValidationError: 'The IBAN does not seem to be correct. You should have entered something like this BEkk BBBC CCCC CCXX\nWhere B = National bank code, S = Branch code, C = Account No, k = Check digit'
+'BE68539007547035'             EXC ValidationError: 'This IBAN does not pass the validation check, please verify it.'
+# Order of checks: unsupported country beats length; length beats checksum; empty first
+'US'                           EXC ValidationError: 'The IBAN is invalid, it should begin with the country code'
+'XX0'                          EXC ValidationError: 'The IBAN is invalid, it should begin with the country code'
+'BE1'                          EXC ValidationError: 'The IBAN does not seem to be correct. You should have entered something like this BEkk BBBC CCCC CCXX\nWhere B = National bank code, S = Branch code, C = Account No, k = Check digit'
+'BE68 5390 0754 703X'          EXC ValidationError: 'This IBAN does not pass the validation check, please verify it.'
+'BE00000000000000'             EXC ValidationError: 'This IBAN does not pass the validation check, please verify it.'

@@ -1,0 +1,105 @@
+# all strings below are printed with ascii(): \u212a = KELVIN SIGN
+## Exhaustive scan, all code points 0..0x10FFFF (surrogates skipped):
+## chars c that survive normalization (non-empty after R1) and whose lowercase is ONE ASCII letter, c not ASCII
+U+212A KELVIN SIGN -> lower 'k'
+total: 1
+
+## Non-ASCII chars whose lowercase is MULTI-char starting with ASCII (shift the 2-char window):
+U+0130 LATIN CAPITAL LETTER I WITH DOT ABOVE -> lower 'i̇'
+total: 1
+
+## Supported codes reachable with a non-ASCII char in pos 1 or 2: ['dk', 'kw', 'kz', 'mk', 'pk', 'sk', 'xk']
+
+## validate / is_iban / pretty / bban / installed acc_type for crafted inputs (correct length for the matched code)
+'D\u212a0000000000000000' (len 18)
+   validate  EXC ValidationError: 'The IBAN does not seem to be correct. You should have entered something like this DKkk BBBB CCCC CCCC CC\nWhere B = National bank code, S = Branch code, C = Account No, k = Check digit'
+   is_iban   OK  -> False
+   pretty    OK  -> 'D\u212a0000000000000000'
+   bban      OK  -> '00000000000000'
+   acc_type  OK  -> 'bank'
+'\u212aW0000000000000000000000000000' (len 30)
+   validate  EXC ValidationError: 'The IBAN does not seem to be correct. You should have entered something like this KWkk BBBB CCCC CCCC CCCC CCCC CCCC CC\nWhere B = National bank code, S = Branch code, C = Account No, k = Check digit'
+   is_iban   OK  -> False
+   pretty    OK  -> '\u212aW0000000000000000000000000000'
+   bban      OK  -> '00000000000000000000000000'
+   acc_type  OK  -> 'bank'
+'\u212aZ000000000000000000' (len 20)
+   validate  EXC ValidationError: 'The IBAN does not seem to be correct. You should have entered something like this KZkk BBBC CCCC CCCC CCCC\nWhere B = National bank code, S = Branch code, C = Account No, k = Check digit'
+   is_iban   OK  -> False
+   pretty    OK  -> '\u212aZ000000000000000000'
+   bban      OK  -> '0000000000000000'
+   acc_type  OK  -> 'bank'
+'M\u212a00000000000000000' (len 19)
+   validate  EXC ValidationError: 'The IBAN does not seem to be correct. You should have entered something like this MKkk BBBC CCCC CCCC CKK\nWhere B = National bank code, S = Branch code, C = Account No, k = Check digit'
+   is_iban   OK  -> False
+   pretty    OK  -> 'M\u212a00000000000000000'
+   bban      OK  -> '000000000000000'
+   acc_type  OK  -> 'bank'
+'P\u212a0000000000000000000000' (len 24)
+   validate  EXC ValidationError: 'The IBAN does not seem to be correct. You should have entered something like this PKkk BBBB CCCC CCCC CCCC CCCC\nWhere B = National bank code, S = Branch code, C = Account No, k = Check digit'
+   is_iban   OK  -> False
+   pretty    OK  -> 'P\u212a0000000000000000000000'
+   bban      OK  -> '00000000000000000000'
+   acc_type  OK  -> 'bank'
+'S\u212a0000000000000000000000' (len 24)
+   validate  EXC ValidationError: 'The IBAN does not seem to be correct. You should have entered something like this SKkk BBBB SSSS SSCC CCCC CCCC\nWhere B = National bank code, S = Branch code, C = Account No, k = Check digit'
+   is_iban   OK  -> False
+   pretty    OK  -> 'S\u212a0000000000000000000000'
+   bban      OK  -> '00000000000000000000'
+   acc_type  OK  -> 'bank'
+'X\u212a000000000000000000' (len 20)
+   validate  EXC ValidationError: 'The IBAN does not seem to be correct. You should have entered something like this XKkk BBBB CCCC CCCC CCCC\nWhere B = National bank code, S = Branch code, C = Account No, k = Check digit'
+   is_iban   OK  -> False
+   pretty    OK  -> 'X\u212a000000000000000000'
+   bban      OK  -> '0000000000000000'
+   acc_type  OK  -> 'bank'
+'\u212aW000000000000000000000000000' (len 29)
+   validate  EXC ValidationError: 'The IBAN does not seem to be correct. You should have entered something like this KWkk BBBB CCCC CCCC CCCC CCCC CCCC CC\nWhere B = National bank code, S = Branch code, C = Account No, k = Check digit'
+   is_iban   OK  -> False
+   pretty    OK  -> '\u212aW000000000000000000000000000'
+   bban      OK  -> '0000000000000000000000000'
+   acc_type  OK  -> 'bank'
+'\u212aW00000000000000000000000000000' (len 31)
+   validate  EXC ValidationError: 'The IBAN does not seem to be correct. You should have entered something like this KWkk BBBB CCCC CCCC CCCC CCCC CCCC CC\nWhere B = National bank code, S = Branch code, C = Account No, k = Check digit'
+   is_iban   OK  -> False
+   pretty    OK  -> '\u212aW00000000000000000000000000000'
+   bban      OK  -> '000000000000000000000000000'
+   acc_type  OK  -> 'bank'
+'\u212aw0000000000000000000000000000' (len 30)
+   validate  EXC ValidationError: 'The IBAN does not seem to be correct. You should have entered something like this KWkk BBBB CCCC CCCC CCCC CCCC CCCC CC\nWhere B = National bank code, S = Branch code, C = Account No, k = Check digit'
+   is_iban   OK  -> False
+   pretty    OK  -> '\u212aw0000000000000000000000000000'
+   bban      OK  -> '00000000000000000000000000'
+   acc_type  OK  -> 'bank'
+'KW0000000000000000000000000000' (len 30)
+   validate  EXC ValidationError: 'This IBAN does not pass the validation check, please verify it.'
+   is_iban   OK  -> False
+   pretty    OK  -> 'KW0000000000000000000000000000'
+   bban      OK  -> '00000000000000000000000000'
+   acc_type  OK  -> 'bank'
+'\u0130E68539007547034' (len 16)
+   validate  EXC ValidationError: 'The IBAN is invalid, it should begin with the country code'
+   is_iban   OK  -> False
+   pretty    OK  -> '\u0130E68539007547034'
+   bban      OK  -> '539007547034'
+   acc_type  OK  -> 'bank'
+'\uff22E68539007547034' (len 16)
+   validate  EXC ValidationError: 'The IBAN is invalid, it should begin with the country code'
+   is_iban   OK  -> False
+   pretty    OK  -> '\uff22E68539007547034'
+   bban      OK  -> '539007547034'
+   acc_type  OK  -> 'bank'
+'\u01c5E00' (len 4)
+   validate  EXC ValidationError: 'The IBAN is invalid, it should begin with the country code'
+   is_iban   OK  -> False
+   pretty    OK  -> '\u01c5E00'
+   bban      OK  -> ''
+   acc_type  OK  -> 'bank'
+
+## Checksum is never reached for these: is there a K-substitute variant of a VALID IBAN that passes? 
+'KW81CBKU0000000000001234560101' valid=OK  -> None  K->U+212A at 0: EXC ValidationError: 'The IBAN does not seem to be correct. You should have entered something like this KWkk BBBB CCCC CCCC CCCC CCCC CCCC CC\nWhere B = National bank code, S = Branch code, C = Account No, k = Check digit'
+'KW81CBKU0000000000001234560101' valid=OK  -> None  K->U+212A at 6: EXC ValidationError: 'The IBAN does not seem to be correct. You should have entered something like this KWkk BBBB CCCC CCCC CCCC CCCC CCCC CC\nWhere B = National bank code, S = Branch code, C = Account No, k = Check digit'
+'KZ86125KZT5004100100' valid=OK  -> None  K->U+212A at 0: EXC ValidationError: 'The IBAN does not seem to be correct. You should have entered something like this KZkk BBBC CCCC CCCC CCCC\nWhere B = National bank code, S = Branch code, C = Account No, k = Check digit'
+'KZ86125KZT5004100100' valid=OK  -> None  K->U+212A at 7: EXC ValidationError: 'The IBAN does not seem to be correct. You should have entered something like this KZkk BBBC CCCC CCCC CCCC\nWhere B = National bank code, S = Branch code, C = Account No, k = Check digit'
+'SK3112000000198742637541' valid=OK  -> None  K->U+212A at 1: EXC ValidationError: 'The IBAN does not seem to be correct. You should have entered something like this SKkk BBBB SSSS SSCC CCCC CCCC\nWhere B = National bank code, S = Branch code, C = Account No, k = Check digit'
+'DK5000400440116243' valid=OK  -> None  K->U+212A at 1: EXC ValidationError: 'The IBAN does not seem to be correct. You should have entered something like this DKkk BBBB CCCC CCCC CC\nWhere B = National bank code, S = Branch code, C = Account No, k = Check digit'

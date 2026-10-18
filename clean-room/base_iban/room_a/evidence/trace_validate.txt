@@ -1,0 +1,96 @@
+# validate_iban(input) -> OK (returns None) or exception
+
+## Published example IBANs (compact)
+'BE68539007547034'                       OK  -> None
+'DE89370400440532013000'                 OK  -> None
+'FR1420041010050500013M02606'            OK  -> None
+'GB82WEST12345698765432'                 OK  -> None
+'NL91ABNA0417164300'                     OK  -> None
+'CH9300762011623852957'                  OK  -> None
+'NO9386011117947'                        OK  -> None
+'MT84MALT011000012345MTLCAST001S'        OK  -> None
+'BR1800360305000010009795493C1'          OK  -> None
+'ES9121000418450200051332'               OK  -> None
+'IT60X0542811101000000123456'            OK  -> None
+'MU17BOMM0101101030300200000MUR'         OK  -> None
+'SA0380000000608010167519'               OK  -> None
+'PL61109010140000071219812874'           OK  -> None
+'AT611904300234573201'                   OK  -> None
+'XK051212012345678906'                   OK  -> None
+'PS92PALS000000000400123456702'          OK  -> None
+'JO94CBJO0010000000000131000302'         OK  -> None
+'QA58DOHB00001234567890ABCDEFG'          OK  -> None
+'KW81CBKU0000000000001234560101'         OK  -> None
+'UA213223130000026007233566001'          OK  -> None
+'IS140159260076545510730339'             OK  -> None
+
+## Input variants (normalization before validation)
+'BE68 5390 0754 7034'                    OK  -> None
+'be68 5390 0754 7034'                    OK  -> None
+'be68539007547034'                       OK  -> None
+'Be68-5390-0754-7034'                    OK  -> None
+'BE68.5390.0754.7034'                    OK  -> None
+'BE68_5390_0754_7034'                    OK  -> None
+' BE68\t5390\n0754 7034 '                OK  -> None
+'BE68\xa05390\xa00754\xa07034'           OK  -> None
+'BE68/5390(0754)7034!'                   OK  -> None
+'IBAN BE68 5390 0754 7034'               EXC ValidationError: 'The IBAN is invalid, it should begin with the country code'
+'gb82 west 1234 5698 7654 32'            OK  -> None
+
+## Empty / missing
+None                                     EXC ValidationError: 'There is no IBAN code.'
+''                                       EXC ValidationError: 'There is no IBAN code.'
+'   '                                    EXC ValidationError: 'There is no IBAN code.'
+'---'                                    EXC ValidationError: 'There is no IBAN code.'
+'_'                                      EXC ValidationError: 'There is no IBAN code.'
+'\xa0'                                   EXC ValidationError: 'There is no IBAN code.'
+
+## Unsupported / bad country code
+'US12345678901234567890'                 EXC ValidationError: 'The IBAN is invalid, it should begin with the country code'
+'LC55HEMM000100010012001200023015'       EXC ValidationError: 'The IBAN is invalid, it should begin with the country code'
+'EG380019000500000000263180002'          EXC ValidationError: 'The IBAN is invalid, it should begin with the country code'
+'SC18SSCB11010000000000001497USD'        EXC ValidationError: 'The IBAN is invalid, it should begin with the country code'
+'12345678901234'                         EXC ValidationError: 'The IBAN is invalid, it should begin with the country code'
+'B'                                      EXC ValidationError: 'The IBAN is invalid, it should begin with the country code'
+'BE'                                     EXC ValidationError: 'The IBAN does not seem to be correct. You should have entered something like this BEkk BBBC CCCC CCXX\nWhere B = National bank code, S = Branch code, C = Account No, k = Check digit'
+'1E68539007547034'                       EXC ValidationError: 'The IBAN is invalid, it should begin with the country code'
+'ZZ00'                                   EXC ValidationError: 'The IBAN is invalid, it should begin with the country code'
+
+## Wrong checksum (right length)
+'BE68539007547035'                       EXC ValidationError: 'This IBAN does not pass the validation check, please verify it.'
+'BE00539007547034'                       EXC ValidationError: 'This IBAN does not pass the validation check, please verify it.'
+'BE01539007547034'                       EXC ValidationError: 'This IBAN does not pass the validation check, please verify it.'
+'BE99539007547034'                       EXC ValidationError: 'This IBAN does not pass the validation check, please verify it.'
+'DE88370400440532013000'                 EXC ValidationError: 'This IBAN does not pass the validation check, please verify it.'
+'GB82WEST12345698765433'                 EXC ValidationError: 'This IBAN does not pass the validation check, please verify it.'
+
+## Wrong length
+'BE6853900754703'                        EXC ValidationError: 'The IBAN does not seem to be correct. You should have entered something like this BEkk BBBC CCCC CCXX\nWhere B = National bank code, S = Branch code, C = Account No, k = Check digit'
+'BE685390075470344'                      EXC ValidationError: 'The IBAN does not seem to be correct. You should have entered something like this BEkk BBBC CCCC CCXX\nWhere B = National bank code, S = Branch code, C = Account No, k = Check digit'
+'BE68'                                   EXC ValidationError: 'The IBAN does not seem to be correct. You should have entered something like this BEkk BBBC CCCC CCXX\nWhere B = National bank code, S = Branch code, C = Account No, k = Check digit'
+'DE8937040044053201300'                  EXC ValidationError: 'The IBAN does not seem to be correct. You should have entered something like this DEkk BBBB BBBB CCCC CCCC CC\nWhere B = National bank code, S = Branch code, C = Account No, k = Check digit'
+'NO938601111794'                         EXC ValidationError: 'The IBAN does not seem to be correct. You should have entered something like this NOkk BBBB CCCC CCK\nWhere B = National bank code, S = Branch code, C = Account No, k = Check digit'
+'MT84MALT011000012345MTLCAST001S0'       EXC ValidationError: 'The IBAN does not seem to be correct. You should have entered something like this MTkk BBBB SSSS SCCC CCCC CCCC CCCC CCC\nWhere B = National bank code, S = Branch code, C = Account No, k = Check digit'
+
+## Non-ASCII word characters survive normalization and are rejected by the format check
+'BE6853900754703é'                       EXC ValidationError: 'The IBAN does not seem to be correct. You should have entered something like this BEkk BBBC CCCC CCXX\nWhere B = National bank code, S = Branch code, C = Account No, k = Check digit'
+'BE68539007547٣٤'                        EXC ValidationError: 'The IBAN does not seem to be correct. You should have entered something like this BEkk BBBC CCCC CCXX\nWhere B = National bank code, S = Branch code, C = Account No, k = Check digit'
+'BE6853900754703ß'                       EXC ValidationError: 'The IBAN does not seem to be correct. You should have entered something like this BEkk BBBC CCCC CCXX\nWhere B = National bank code, S = Branch code, C = Account No, k = Check digit'
+'BE685390075470²³'                       EXC ValidationError: 'The IBAN does not seem to be correct. You should have entered something like this BEkk BBBC CCCC CCXX\nWhere B = National bank code, S = Branch code, C = Account No, k = Check digit'
+
+## Structure inside the BBAN is NOT enforced: letters where the template says digits; check digits found via the validator itself
+BE + kk + ABCDEFGHIJKL -> first valid: 'BE57ABCDEFGHIJKL'
+   validate('BE57ABCDEFGHIJKL') OK  -> None ; lowercase OK  -> None
+DE + kk + XXXXXXXXXXXXXXXXXX -> first valid: 'DE51XXXXXXXXXXXXXXXXXX'
+   validate('DE51XXXXXXXXXXXXXXXXXX') OK  -> None ; lowercase OK  -> None
+NO + kk + 00000000000 -> first valid: 'NO1300000000000'
+   validate('NO1300000000000') OK  -> None ; lowercase OK  -> None
+BE + kk + 000000000000 -> first valid: 'BE54000000000000'
+   validate('BE54000000000000') OK  -> None ; lowercase OK  -> None
+be + kk + abcdefghijkl -> first valid: 'be57abcdefghijkl'
+   validate('be57abcdefghijkl') OK  -> None ; lowercase OK  -> None
+
+## Check digits that are letters (base-36 conversion applies to all positions)
+non-digit check-digit pairs accepted for BE..539007547034: 10, first few: ['BEI6539007547034', 'BEOX539007547034', 'BEPU539007547034', 'BEQR539007547034', 'BERO539007547034']
+
+## Return value of validate_iban on success: None

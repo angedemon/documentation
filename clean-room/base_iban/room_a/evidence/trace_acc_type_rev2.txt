@@ -1,0 +1,38 @@
+# python 3.13.16
+# MRO of simulated installed model: ['mk.<locals>.Rec@__main__', 'Installed@__main__', 'ResPartnerBank@orig_base_iban_rpb', 'ResPartnerBank@orig_base_res_bank', 'Model@odoo.models', 'object@builtins']
+
+## BASE alone
+_get_supported_account_types() -> [('bank', 'Normal')]
+get_supported_account_types()  -> [('bank', 'Normal')]
+retrieve_acc_type('BE68539007547034') OK  -> 'bank'
+retrieve_acc_type('be68 5390 0754 7034') OK  -> 'bank'
+retrieve_acc_type('BE68539007547035') OK  -> 'bank'
+retrieve_acc_type('US1234') OK  -> 'bank'
+retrieve_acc_type('123-456-789') OK  -> 'bank'
+retrieve_acc_type('KW0000000000000000000000000000') OK  -> 'bank'
+retrieve_acc_type('') OK  -> 'bank'
+retrieve_acc_type(None) OK  -> 'bank'
+retrieve_acc_type(False) OK  -> 'bank'
+retrieve_acc_type(0) OK  -> 'bank'
+retrieve_acc_type(12) OK  -> 'bank'
+
+## INSTALLED (base_iban over base)
+_get_supported_account_types() -> [('bank', 'Normal'), ('iban', 'IBAN')]
+get_supported_account_types()  -> [('bank', 'Normal'), ('iban', 'IBAN')]
+retrieve_acc_type('BE68539007547034') OK  -> 'iban'
+retrieve_acc_type('be68 5390 0754 7034') OK  -> 'iban'
+retrieve_acc_type('BE68539007547035') OK  -> 'bank'
+retrieve_acc_type('US1234') OK  -> 'bank'
+retrieve_acc_type('123-456-789') OK  -> 'bank'
+retrieve_acc_type('KW0000000000000000000000000000') OK  -> 'bank'
+retrieve_acc_type('') OK  -> 'bank'
+retrieve_acc_type(None) OK  -> 'bank'
+retrieve_acc_type(False) OK  -> 'bank'
+retrieve_acc_type(0) OK  -> 'bank'
+retrieve_acc_type(12) EXC TypeError: "expected string or bytes-like object, got 'int'"
+
+## acc_type compute (BASE compute method, run on INSTALLED record)
+acc_number='be68 5390 0754 7034' -> acc_type='iban'
+acc_number='BE68539007547035' -> acc_type='bank'
+acc_number='123456' -> acc_type='bank'
+acc_number=False -> acc_type='bank'

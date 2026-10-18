@@ -1,0 +1,41 @@
+# Model methods exercised with stub ORM. Parent (base) behaviour is STUBBED: retrieve_acc_type -> "bank".
+
+## _get_supported_account_types: [('bank', 'Normal'), ('iban', 'IBAN')]
+
+## retrieve_acc_type
+'BE68539007547034'             OK  -> 'iban'
+'be68 5390 0754 7034'          OK  -> 'iban'
+'BE68539007547035'             OK  -> 'bank'
+'US1234'                       OK  -> 'bank'
+'123-456-789'                  OK  -> 'bank'
+''                             OK  -> 'bank'
+None                           OK  -> 'bank'
+
+## check_iban (bool)
+'BE68539007547034'             OK  -> True
+'be68 5390 0754 7034'          OK  -> True
+'BE68539007547035'             OK  -> False
+''                             OK  -> False
+None                           OK  -> False
+check_iban() no arg: OK  -> False
+
+## create(vals_list) -> vals passed to parent
+in : [{'acc_number': 'be68 5390 0754 7034'}, {'acc_number': 'BE68539007547035'}, {'acc_number': '123 456'}, {'acc_number': ''}, {'acc_number': False}, {}, {'acc_number': 'no93-8601-1117-947'}]
+out: [{'acc_number': 'be68 5390 0754 7034'}, {'acc_number': 'BE68539007547035'}, {'acc_number': '123 456'}, {'acc_number': ''}, {'acc_number': False}, {}, {'acc_number': 'no93 8601 1117 947'}]
+
+## write(vals)
+{'acc_number': 'de89370400440532013000'} -> {'acc_number': 'de89 3704 0044 0532 0130 00'}
+{'acc_number': 'DE89370400440532013001'} -> {'acc_number': 'DE89370400440532013001'}
+{'name': 'x'} -> {'name': 'x'}
+
+## get_bban() method
+acc_number='BE68 5390 0754 7034' acc_type='iban' -> OK  -> '539007547034'
+acc_number='BE68 5390 0754 7034' acc_type='bank' -> EXC UserError: 'Cannot compute the BBAN because the account number is not an IBAN.'
+acc_number='123456' acc_type='bank' -> EXC UserError: 'Cannot compute the BBAN because the account number is not an IBAN.'
+acc_number='XX' acc_type='iban' -> OK  -> ''
+
+## _check_iban constraint
+acc_number='BE68 5390 0754 7034' acc_type='iban' -> OK  -> None
+acc_number='BE68539007547035' acc_type='iban' -> EXC ValidationError: 'This IBAN does not pass the validation check, please verify it.'
+acc_number='BE68539007547035' acc_type='bank' -> OK  -> None
+acc_number='garbage' acc_type='bank' -> OK  -> None

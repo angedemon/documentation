@@ -1,0 +1,154 @@
+# Behaviour per input type. is_iban = boolean wrapper (check_iban); acc_type = INSTALLED retrieve_acc_type
+
+NoneType None
+   normalize     OK  -> ''
+   validate      EXC ValidationError: 'There is no IBAN code.'
+   is_iban       OK  -> False
+   pretty        OK  -> None
+   bban          OK  -> ''
+   acc_type      OK  -> 'bank'
+   base_sanitize OK  -> False
+
+bool False
+   normalize     OK  -> ''
+   validate      EXC ValidationError: 'There is no IBAN code.'
+   is_iban       OK  -> False
+   pretty        OK  -> False
+   bban          OK  -> ''
+   acc_type      OK  -> 'bank'
+   base_sanitize OK  -> False
+
+bool True
+   normalize     EXC TypeError: "expected string or bytes-like object, got 'bool'"
+   validate      EXC TypeError: "expected string or bytes-like object, got 'bool'"
+   is_iban       EXC TypeError: "expected string or bytes-like object, got 'bool'"
+   pretty        EXC TypeError: "expected string or bytes-like object, got 'bool'"
+   bban          EXC TypeError: "expected string or bytes-like object, got 'bool'"
+   acc_type      EXC TypeError: "expected string or bytes-like object, got 'bool'"
+   base_sanitize EXC TypeError: "expected string or bytes-like object, got 'bool'"
+
+int 0
+   normalize     OK  -> ''
+   validate      EXC ValidationError: 'There is no IBAN code.'
+   is_iban       OK  -> False
+   pretty        OK  -> 0
+   bban          OK  -> ''
+   acc_type      OK  -> 'bank'
+   base_sanitize OK  -> False
+
+int 12
+   normalize     EXC TypeError: "expected string or bytes-like object, got 'int'"
+   validate      EXC TypeError: "expected string or bytes-like object, got 'int'"
+   is_iban       EXC TypeError: "expected string or bytes-like object, got 'int'"
+   pretty        EXC TypeError: "expected string or bytes-like object, got 'int'"
+   bban          EXC TypeError: "expected string or bytes-like object, got 'int'"
+   acc_type      EXC TypeError: "expected string or bytes-like object, got 'int'"
+   base_sanitize EXC TypeError: "expected string or bytes-like object, got 'int'"
+
+float 0.0
+   normalize     OK  -> ''
+   validate      EXC ValidationError: 'There is no IBAN code.'
+   is_iban       OK  -> False
+   pretty        OK  -> 0.0
+   bban          OK  -> ''
+   acc_type      OK  -> 'bank'
+   base_sanitize OK  -> False
+
+float 1.5
+   normalize     EXC TypeError: "expected string or bytes-like object, got 'float'"
+   validate      EXC TypeError: "expected string or bytes-like object, got 'float'"
+   is_iban       EXC TypeError: "expected string or bytes-like object, got 'float'"
+   pretty        EXC TypeError: "expected string or bytes-like object, got 'float'"
+   bban          EXC TypeError: "expected string or bytes-like object, got 'float'"
+   acc_type      EXC TypeError: "expected string or bytes-like object, got 'float'"
+   base_sanitize EXC TypeError: "expected string or bytes-like object, got 'float'"
+
+bytes b''
+   normalize     OK  -> ''
+   validate      EXC ValidationError: 'There is no IBAN code.'
+   is_iban       OK  -> False
+   pretty        OK  -> b''
+   bban          OK  -> ''
+   acc_type      OK  -> 'bank'
+   base_sanitize OK  -> False
+
+bytes b'BE68539007547034'
+   normalize     EXC TypeError: 'cannot use a string pattern on a bytes-like object'
+   validate      EXC TypeError: 'cannot use a string pattern on a bytes-like object'
+   is_iban       EXC TypeError: 'cannot use a string pattern on a bytes-like object'
+   pretty        EXC TypeError: 'cannot use a string pattern on a bytes-like object'
+   bban          EXC TypeError: 'cannot use a string pattern on a bytes-like object'
+   acc_type      EXC TypeError: 'cannot use a string pattern on a bytes-like object'
+   base_sanitize EXC TypeError: 'cannot use a string pattern on a bytes-like object'
+
+bytearray bytearray(b'BE68')
+   normalize     EXC TypeError: 'cannot use a string pattern on a bytes-like object'
+   validate      EXC TypeError: 'cannot use a string pattern on a bytes-like object'
+   is_iban       EXC TypeError: 'cannot use a string pattern on a bytes-like object'
+   pretty        EXC TypeError: 'cannot use a string pattern on a bytes-like object'
+   bban          EXC TypeError: 'cannot use a string pattern on a bytes-like object'
+   acc_type      EXC TypeError: 'cannot use a string pattern on a bytes-like object'
+   base_sanitize EXC TypeError: 'cannot use a string pattern on a bytes-like object'
+
+list []
+   normalize     OK  -> ''
+   validate      EXC ValidationError: 'There is no IBAN code.'
+   is_iban       OK  -> False
+   pretty        OK  -> []
+   bban          OK  -> ''
+   acc_type      OK  -> 'bank'
+   base_sanitize OK  -> False
+
+list ['BE68539007547034']
+   normalize     EXC TypeError: "expected string or bytes-like object, got 'list'"
+   validate      EXC TypeError: "expected string or bytes-like object, got 'list'"
+   is_iban       EXC TypeError: "expected string or bytes-like object, got 'list'"
+   pretty        EXC TypeError: "expected string or bytes-like object, got 'list'"
+   bban          EXC TypeError: "expected string or bytes-like object, got 'list'"
+   acc_type      EXC TypeError: "expected string or bytes-like object, got 'list'"
+   base_sanitize EXC TypeError: "expected string or bytes-like object, got 'list'"
+
+tuple ()
+   normalize     OK  -> ''
+   validate      EXC ValidationError: 'There is no IBAN code.'
+   is_iban       OK  -> False
+   pretty        OK  -> ()
+   bban          OK  -> ''
+   acc_type      OK  -> 'bank'
+   base_sanitize OK  -> False
+
+dict {}
+   normalize     OK  -> ''
+   validate      EXC ValidationError: 'There is no IBAN code.'
+   is_iban       OK  -> False
+   pretty        OK  -> {}
+   bban          OK  -> ''
+   acc_type      OK  -> 'bank'
+   base_sanitize OK  -> False
+
+dict {'a': 1}
+   normalize     EXC TypeError: "expected string or bytes-like object, got 'dict'"
+   validate      EXC TypeError: "expected string or bytes-like object, got 'dict'"
+   is_iban       EXC TypeError: "expected string or bytes-like object, got 'dict'"
+   pretty        EXC TypeError: "expected string or bytes-like object, got 'dict'"
+   bban          EXC TypeError: "expected string or bytes-like object, got 'dict'"
+   acc_type      EXC TypeError: "expected string or bytes-like object, got 'dict'"
+   base_sanitize EXC TypeError: "expected string or bytes-like object, got 'dict'"
+
+set set()
+   normalize     OK  -> ''
+   validate      EXC ValidationError: 'There is no IBAN code.'
+   is_iban       OK  -> False
+   pretty        OK  -> set()
+   bban          OK  -> ''
+   acc_type      OK  -> 'bank'
+   base_sanitize OK  -> False
+
+object 'object()'
+   normalize     EXC TypeError: "expected string or bytes-like object, got 'object'"
+   validate      EXC TypeError: "expected string or bytes-like object, got 'object'"
+   is_iban       EXC TypeError: "expected string or bytes-like object, got 'object'"
+   pretty        EXC TypeError: "expected string or bytes-like object, got 'object'"
+   bban          EXC TypeError: "expected string or bytes-like object, got 'object'"
+   acc_type      EXC TypeError: "expected string or bytes-like object, got 'object'"
+   base_sanitize EXC TypeError: "expected string or bytes-like object, got 'object'"

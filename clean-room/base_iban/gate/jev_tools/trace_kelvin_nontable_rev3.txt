@@ -1,0 +1,90 @@
+# python 3.13.16 ; strings printed with ascii(): \u212a = KELVIN SIGN
+'\u212aE68539007547034' (len 16) pair-as-K='ke' in_table=False
+   validate  EXC ValidationError: 'The IBAN is invalid, it should begin with the country code'
+   is_iban   OK  -> False
+   pretty    OK  -> '\u212aE68539007547034'
+   bban      OK  -> '539007547034'
+   acc_type  OK  -> 'bank'
+'B\u212a68539007547034' (len 16) pair-as-K='bk' in_table=False
+   validate  EXC ValidationError: 'The IBAN is invalid, it should begin with the country code'
+   is_iban   OK  -> False
+   pretty    OK  -> 'B\u212a68539007547034'
+   bban      OK  -> '539007547034'
+   acc_type  OK  -> 'bank'
+'\u212aE' (len 2) pair-as-K='ke' in_table=False
+   validate  EXC ValidationError: 'The IBAN is invalid, it should begin with the country code'
+   is_iban   OK  -> False
+   pretty    OK  -> '\u212aE'
+   bban      OK  -> ''
+   acc_type  OK  -> 'bank'
+'B\u212a' (len 2) pair-as-K='bk' in_table=False
+   validate  EXC ValidationError: 'The IBAN is invalid, it should begin with the country code'
+   is_iban   OK  -> False
+   pretty    OK  -> 'B\u212a'
+   bban      OK  -> ''
+   acc_type  OK  -> 'bank'
+'\u212aA00' (len 4) pair-as-K='ka' in_table=False
+   validate  EXC ValidationError: 'The IBAN is invalid, it should begin with the country code'
+   is_iban   OK  -> False
+   pretty    OK  -> '\u212aA00'
+   bban      OK  -> ''
+   acc_type  OK  -> 'bank'
+'A\u212a00' (len 4) pair-as-K='ak' in_table=False
+   validate  EXC ValidationError: 'The IBAN is invalid, it should begin with the country code'
+   is_iban   OK  -> False
+   pretty    OK  -> 'A\u212a00'
+   bban      OK  -> ''
+   acc_type  OK  -> 'bank'
+'\u212a\u212a00' (len 4) pair-as-K='kk' in_table=False
+   validate  EXC ValidationError: 'The IBAN is invalid, it should begin with the country code'
+   is_iban   OK  -> False
+   pretty    OK  -> '\u212a\u212a00'
+   bban      OK  -> ''
+   acc_type  OK  -> 'bank'
+'\u212ae68539007547034' (len 16) pair-as-K='ke' in_table=False
+   validate  EXC ValidationError: 'The IBAN is invalid, it should begin with the country code'
+   is_iban   OK  -> False
+   pretty    OK  -> '\u212ae68539007547034'
+   bban      OK  -> '539007547034'
+   acc_type  OK  -> 'bank'
+'b\u212a68539007547034' (len 16) pair-as-K='bk' in_table=False
+   validate  EXC ValidationError: 'The IBAN is invalid, it should begin with the country code'
+   is_iban   OK  -> False
+   pretty    OK  -> 'b\u212a68539007547034'
+   bban      OK  -> '539007547034'
+   acc_type  OK  -> 'bank'
+'\u212a100000000000000' (len 16) pair-as-K='k1' in_table=False
+   validate  EXC ValidationError: 'The IBAN is invalid, it should begin with the country code'
+   is_iban   OK  -> False
+   pretty    OK  -> '\u212a100000000000000'
+   bban      OK  -> '000000000000'
+   acc_type  OK  -> 'bank'
+'1\u212a00000000000000' (len 16) pair-as-K='1k' in_table=False
+   validate  EXC ValidationError: 'The IBAN is invalid, it should begin with the country code'
+   is_iban   OK  -> False
+   pretty    OK  -> '1\u212a00000000000000'
+   bban      OK  -> '000000000000'
+   acc_type  OK  -> 'bank'
+'\u212a' (len 1) pair-as-K='k' in_table=False
+   validate  EXC ValidationError: 'The IBAN is invalid, it should begin with the country code'
+   is_iban   OK  -> False
+   pretty    OK  -> '\u212a'
+   bban      OK  -> ''
+   acc_type  OK  -> 'bank'
+'\u212aW0000000000000000000000000000' (len 30) pair-as-K='kw' in_table=True
+   validate  EXC ValidationError: 'The IBAN does not seem to be correct. You should have entered something like this KWkk BBBB CCCC CCCC CCCC CCCC CCCC CC\nWhere B = National bank code, S = Branch code, C = Account No, k = Check digit'
+   is_iban   OK  -> False
+   pretty    OK  -> '\u212aW0000000000000000000000000000'
+   bban      OK  -> '00000000000000000000000000'
+   acc_type  OK  -> 'bank'
+'S\u212a3112000000198742637541' (len 24) pair-as-K='sk' in_table=True
+   validate  EXC ValidationError: 'The IBAN does not seem to be correct. You should have entered something like this SKkk BBBB SSSS SSCC CCCC CCCC\nWhere B = National bank code, S = Branch code, C = Account No, k = Check digit'
+   is_iban   OK  -> False
+   pretty    OK  -> 'S\u212a3112000000198742637541'
+   bban      OK  -> '12000000198742637541'
+   acc_type  OK  -> 'bank'
+
+## Exhaustive: every pair with U+212A in pos 1 or 2 and the other char in [0-9A-Za-z] or U+212A,
+## suffix "00" (len 4). Message counts split by whether the K-reading is a table code.
+in_table=False  message=country  count=112
+in_table=True  message=format  count=14

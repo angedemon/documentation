@@ -1,0 +1,91 @@
+## BASE sanitize function (feeds the stored "sanitized account number")
+'BE68 5390 0754 7034'            OK  -> 'BE68539007547034'
+'be68-5390.0754/7034'            OK  -> 'BE68539007547034'
+'BE68_5390_0754_7034'            OK  -> 'BE68_5390_0754_7034'
+'be68 5390 0754 7034'            OK  -> 'BE68539007547034'
+'é ß ٣'                          OK  -> 'ÉSS٣'
+'KW00'                           OK  -> 'KW00'
+'123 456'                        OK  -> '123456'
+''                               OK  -> False
+None                             OK  -> False
+False                            OK  -> False
+0                                OK  -> False
+
+## create(vals_list): vals reaching the ORM root
+#   BASE alone | INSTALLED
+{'acc_number': 'be68 5390 0754 7034'}
+    base     : {'acc_number': 'be68 5390 0754 7034', 'sanitized_acc_number': 'BE68539007547034'}
+    installed: {'acc_number': 'be68 5390 0754 7034', 'sanitized_acc_number': 'BE68539007547034'}
+{'acc_number': 'BE68_5390_0754_7034'}
+    base     : {'acc_number': 'BE68_5390_0754_7034', 'sanitized_acc_number': 'BE68_5390_0754_7034'}
+    installed: {'acc_number': 'BE68 5390 0754 7034', 'sanitized_acc_number': 'BE68539007547034'}
+{'acc_number': 'BE68539007547034'}
+    base     : {'acc_number': 'BE68539007547034', 'sanitized_acc_number': 'BE68539007547034'}
+    installed: {'acc_number': 'BE68 5390 0754 7034', 'sanitized_acc_number': 'BE68539007547034'}
+{'acc_number': 'no93-8601-1117-947'}
+    base     : {'acc_number': 'no93-8601-1117-947', 'sanitized_acc_number': 'NO9386011117947'}
+    installed: {'acc_number': 'no93 8601 1117 947', 'sanitized_acc_number': 'NO9386011117947'}
+{'acc_number': 'BE68539007547035'}
+    base     : {'acc_number': 'BE68539007547035', 'sanitized_acc_number': 'BE68539007547035'}
+    installed: {'acc_number': 'BE68539007547035', 'sanitized_acc_number': 'BE68539007547035'}
+{'acc_number': '123 456'}
+    base     : {'acc_number': '123 456', 'sanitized_acc_number': '123456'}
+    installed: {'acc_number': '123 456', 'sanitized_acc_number': '123456'}
+{'acc_number': 'abc_def'}
+    base     : {'acc_number': 'abc_def', 'sanitized_acc_number': 'ABC_DEF'}
+    installed: {'acc_number': 'abc_def', 'sanitized_acc_number': 'ABC_DEF'}
+{'acc_number': ''}
+    base     : {'acc_number': '', 'sanitized_acc_number': False}
+    installed: {'acc_number': '', 'sanitized_acc_number': False}
+{'acc_number': False}
+    base     : {'acc_number': False, 'sanitized_acc_number': False}
+    installed: {'acc_number': False, 'sanitized_acc_number': False}
+{}
+    base     : {}
+    installed: {}
+{'sanitized_acc_number': 'be68 5390 0754 7034'}
+    base     : {'acc_number': 'be68 5390 0754 7034', 'sanitized_acc_number': 'BE68539007547034'}
+    installed: {'acc_number': 'be68 5390 0754 7034', 'sanitized_acc_number': 'BE68539007547034'}
+{'acc_number': 'be68 5390 0754 7034', 'sanitized_acc_number': 'XYZ'}
+    base     : {'acc_number': 'XYZ', 'sanitized_acc_number': 'XYZ'}
+    installed: {'acc_number': 'XYZ', 'sanitized_acc_number': 'XYZ'}
+{'sanitized_acc_number': 'BE68539007547034'}
+    base     : {'acc_number': 'BE68539007547034', 'sanitized_acc_number': 'BE68539007547034'}
+    installed: {'acc_number': 'BE68539007547034', 'sanitized_acc_number': 'BE68539007547034'}
+{'acc_number': 'BE68539007547034'}
+    base     : {'acc_number': 'BE68539007547034', 'sanitized_acc_number': 'BE68539007547034'}
+    installed: {'acc_number': 'BE68 5390 0754 7034', 'sanitized_acc_number': 'BE68539007547034'}
+
+## write(vals): vals reaching the ORM root (INSTALLED)
+{'acc_number': 'be68 5390 0754 7034'} -> {'acc_number': 'be68 5390 0754 7034', 'sanitized_acc_number': 'BE68539007547034'}
+{'acc_number': 'BE68_5390_0754_7034'} -> {'acc_number': 'BE68 5390 0754 7034', 'sanitized_acc_number': 'BE68539007547034'}
+{'acc_number': 'BE68539007547034'} -> {'acc_number': 'BE68 5390 0754 7034', 'sanitized_acc_number': 'BE68539007547034'}
+{'acc_number': 'no93-8601-1117-947'} -> {'acc_number': 'no93 8601 1117 947', 'sanitized_acc_number': 'NO9386011117947'}
+{'acc_number': 'BE68539007547035'} -> {'acc_number': 'BE68539007547035', 'sanitized_acc_number': 'BE68539007547035'}
+{'acc_number': '123 456'} -> {'acc_number': '123 456', 'sanitized_acc_number': '123456'}
+{'acc_number': 'abc_def'} -> {'acc_number': 'abc_def', 'sanitized_acc_number': 'ABC_DEF'}
+{'acc_number': ''} -> {'acc_number': '', 'sanitized_acc_number': False}
+{'acc_number': False} -> {'acc_number': False, 'sanitized_acc_number': False}
+{} -> {}
+{'sanitized_acc_number': 'be68 5390 0754 7034'} -> {'acc_number': 'be68 5390 0754 7034', 'sanitized_acc_number': 'BE68539007547034'}
+{'acc_number': 'be68 5390 0754 7034', 'sanitized_acc_number': 'XYZ'} -> {'acc_number': 'XYZ', 'sanitized_acc_number': 'XYZ'}
+{'sanitized_acc_number': 'BE68539007547034'} -> {'acc_number': 'BE68539007547034', 'sanitized_acc_number': 'BE68539007547034'}
+{'acc_number': 'BE68539007547034'} -> {'acc_number': 'BE68 5390 0754 7034', 'sanitized_acc_number': 'BE68539007547034'}
+
+## Search condition on account number (BASE, unchanged by base_iban)
+acc_number = 'be68 5390 0754 7034' -> ('CONDITION', 'sanitized_acc_number', '=', 'BE68539007547034')
+acc_number = 'BE68 5390 0754 7034' -> ('CONDITION', 'sanitized_acc_number', '=', 'BE68539007547034')
+acc_number = 'BE68_5390_0754_7034' -> ('CONDITION', 'sanitized_acc_number', '=', 'BE68_5390_0754_7034')
+acc_number = ['be68-5390', 'x y'] -> ('CONDITION', 'sanitized_acc_number', '=', ['BE685390', 'XY'])
+
+## Property check: for valid IBAN inputs, installed sanitized value == base sanitize(normalize(input))
+'be68 5390 0754 7034'                installed='BE68539007547034'  base_alone='BE68539007547034'  upper(normalize)='BE68539007547034'  equal=True
+'BE68_5390_0754_7034'                installed='BE68539007547034'  base_alone='BE68_5390_0754_7034'  upper(normalize)='BE68539007547034'  equal=True
+'gb82 west 1234 5698 7654 32'        installed='GB82WEST12345698765432'  base_alone='GB82WEST12345698765432'  upper(normalize)='GB82WEST12345698765432'  equal=True
+'Be68-5390-0754-7034'                installed='BE68539007547034'  base_alone='BE68539007547034'  upper(normalize)='BE68539007547034'  equal=True
+' BE68\t5390\n0754 7034 '            installed='BE68539007547034'  base_alone='BE68539007547034'  upper(normalize)='BE68539007547034'  equal=True
+'NO93 8601 1117 947'                 installed='NO9386011117947'  base_alone='NO9386011117947'  upper(normalize)='NO9386011117947'  equal=True
+'BE68/5390(0754)7034!'               installed='BE68539007547034'  base_alone='BE68539007547034'  upper(normalize)='BE68539007547034'  equal=True
+
+## Exhaustive: base sanitize keeps char c  <=>  c.isalnum() or c == "_"   (all code points, surrogates skipped)
+mismatches: 0 []
