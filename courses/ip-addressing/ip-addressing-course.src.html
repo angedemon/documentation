@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>IP Addressing Complete Course</title>
+<style>{{CSS}}</style>
+</head>
+<body>
+
+<div class="cover">
+  <h1>IP Addressing<br>from Binary to Subnetting</h1>
+  <div class="sub">A complete, detailed course: binary &amp; hexadecimal, IPv4 structure, classes,<br>public &amp; private addresses, masks &amp; CIDR, subnetting, VLSM, supernetting, NAT and IPv6</div>
+  <div class="meta">Level: beginner to intermediate &nbsp;·&nbsp; Edition: November 2026</div>
+</div>
+
+<div class="toc">
+<h2>Table of contents</h2>
+<ol>
+  <li><b>Binary numbers</b> – the foundation of everything</li>
+  <li>Hexadecimal</li>
+  <li>The binary AND operation</li>
+  <li>Structure of an IPv4 address</li>
+  <li>Address classes (classful addressing)</li>
+  <li>Public, private and special addresses</li>
+  <li>Unicast, broadcast, multicast, anycast</li>
+  <li>The subnet mask and CIDR notation</li>
+  <li>Network address, broadcast address and host range</li>
+  <li><b>Subnetting</b> (fixed-length, FLSM)</li>
+  <li>Fast subnetting: the “magic number” method</li>
+  <li><b>VLSM</b> – Variable Length Subnet Masking</li>
+  <li><b>Supernetting</b> and route summarization</li>
+  <li>Wildcard masks</li>
+  <li>NAT and PAT</li>
+  <li>IPv6 addressing</li>
+  <li>Reference tables</li>
+  <li>Exercises with detailed answers</li>
+</ol>
+<div class="box note"><b class="t">How to use this course</b>
+Do not skip chapter 1. Subnetting is only “difficult” for people who do not yet read binary comfortably; once powers of two are automatic, every subnetting problem becomes simple arithmetic. Do every small exercise with pencil and paper before checking the answer.<br><br>
+Colour code used in binary examples: <span class="n">network bits</span>, <span class="s">subnet (borrowed) bits</span>, <span class="h">host bits</span>.</div>
+</div>
+
+<!-- =================================================== -->
+<h1>1. Binary numbers</h1>
+<h2>1.1 Why binary?</h2>
+<p>Computers store everything as electrical states: on or off. Each state is a <b>bit</b> (binary digit) that is either <b>0</b> or <b>1</b>. A group of 8 bits is a <b>byte</b>, also called an <b>octet</b> in networking. An IPv4 address is simply 32 bits; we write it as four decimal numbers only because humans read decimal more easily.</p>
+
+<h2>1.2 Positional number systems</h2>
+<p>In decimal (base 10) each position is worth ten times the position to its right:</p>
+<table class="bt"><tr><th>Position</th><th>10<sup>3</sup> = 1000</th><th>10<sup>2</sup> = 100</th><th>10<sup>1</sup> = 10</th><th>10<sup>0</sup> = 1</th></tr>
+<tr><td>4 725</td><td>4</td><td>7</td><td>2</td><td>5</td></tr></table>
+<p>4725 = 4×1000 + 7×100 + 2×10 + 5×1. Binary (base 2) works <b>exactly</b> the same way, but each position is worth <b>twice</b> the one to its right, and the only digits are 0 and 1.</p>
+
+<h2>1.3 The 8 bit values of an octet – learn them by heart</h2>
+<table class="bt">
+<tr><th>Bit position</th><th>7</th><th>6</th><th>5</th><th>4</th><th>3</th><th>2</th><th>1</th><th>0</th></tr>
+<tr><td>Power of 2</td><td>2<sup>7</sup></td><td>2<sup>6</sup></td><td>2<sup>5</sup></td><td>2<sup>4</sup></td><td>2<sup>3</sup></td><td>2<sup>2</sup></td><td>2<sup>1</sup></td><td>2<sup>0</sup></td></tr>
+<tr><td><b>Value</b></td><td><b>128</b></td><td><b>64</b></td><td><b>32</b></td><td><b>16</b></td><td><b>8</b></td><td><b>4</b></td><td><b>2</b></td><td><b>1</b></td></tr>
+</table>
+<ul>
+  <li>The left-most bit is the <b>most significant bit</b> (MSB, worth 128); the right-most is the <b>least significant bit</b> (LSB, worth 1).</li>
+  <li>The largest value of an octet is 11111111 = 128+64+32+16+8+4+2+1 = <b>255</b>; the smallest is 00000000 = <b>0</b>. That is why each part of an IPv4 address is between 0 and 255: there are 2<sup>8</sup> = <b>256</b> possible values.</li>
+  <li>With <i>n</i> bits you can write <b>2<sup>n</sup></b> different values (from 0 to 2<sup>n</sup> − 1). This single rule is the heart of subnetting.</li>
+</ul>
+
+<h2>1.4 Binary → decimal</h2>
+<p>Write the values 128 64 32 16 8 4 2 1 above the bits and <b>add the values where there is a 1</b>.</p>
+<table class="bt">
+<tr><th>Value</th><th>128</th><th>64</th><th>32</th><th>16</th><th>8</th><th>4</th><th>2</th><th>1</th><th>Total</th></tr>
+<tr><td>11010110</td><td>1</td><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td><td>1</td><td>0</td><td>128+64+16+4+2 = <b>214</b></td></tr>
+<tr><td>10101000</td><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>128+32+8 = <b>168</b></td></tr>
+<tr><td>00001010</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td><td>8+2 = <b>10</b></td></tr>
+<tr><td>01111111</td><td>0</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>64+32+16+8+4+2+1 = <b>127</b></td></tr>
+</table>
+<div class="box tip"><b class="t">Shortcut</b>A number made of only ones is 2<sup>n</sup> − 1: 1111 = 15, 111111 = 63, 01111111 = 127. Thus 01111111 = 128 − 1.</div>
+
+<h2>1.5 Decimal → binary</h2>
+<h3>Method 1 – subtraction (the fastest for IP addresses)</h3>
+<p>Go through 128, 64, 32, 16, 8, 4, 2, 1. If the value fits in what remains, write <b>1</b> and subtract it; otherwise write <b>0</b>.</p>
+<p>Example: convert <b>172</b>.</p>
+<table class="bt">
+<tr><th>Value</th><th>Does it fit?</th><th>Bit</th><th>Remainder</th></tr>
+<tr><td>128</td><td>172 ≥ 128 yes</td><td>1</td><td>172 − 128 = 44</td></tr>
+<tr><td>64</td><td>44 ≥ 64 no</td><td>0</td><td>44</td></tr>
+<tr><td>32</td><td>44 ≥ 32 yes</td><td>1</td><td>12</td></tr>
+<tr><td>16</td><td>12 ≥ 16 no</td><td>0</td><td>12</td></tr>
+<tr><td>8</td><td>12 ≥ 8 yes</td><td>1</td><td>4</td></tr>
+<tr><td>4</td><td>4 ≥ 4 yes</td><td>1</td><td>0</td></tr>
+<tr><td>2</td><td>no</td><td>0</td><td>0</td></tr>
+<tr><td>1</td><td>no</td><td>0</td><td>0</td></tr>
+</table>
+<p>Result: 172 = <b class="bits">10101100</b>.</p>
+
+<h3>Method 2 – successive division by 2</h3>
+<p>Divide by 2 repeatedly and note the remainders; read them <b>from bottom to top</b>.</p>
+<table class="bt">
+<tr><th>Division</th><th>Quotient</th><th>Remainder</th></tr>
+<tr><td>172 ÷ 2</td><td>86</td><td>0</td></tr>
+<tr><td>86 ÷ 2</td><td>43</td><td>0</td></tr>
+<tr><td>43 ÷ 2</td><td>21</td><td>1</td></tr>
+<tr><td>21 ÷ 2</td><td>10</td><td>1</td></tr>
+<tr><td>10 ÷ 2</td><td>5</td><td>0</td></tr>
+<tr><td>5 ÷ 2</td><td>2</td><td>1</td></tr>
+<tr><td>2 ÷ 2</td><td>1</td><td>0</td></tr>
+<tr><td>1 ÷ 2</td><td>0</td><td>1 ↑ read upward</td></tr>
+</table>
+<p>Reading upward: <b class="bits">10101100</b> – the same result. Always pad to 8 bits with zeros on the left: 10 = 1010 → <b class="bits">00001010</b>.</p>
+
+<h2>1.6 The mask values: bits set from the left</h2>
+<p>Subnet masks are built by turning bits on <b>from the left</b>. Only nine values are therefore possible in an octet of a mask. Memorise this table — you will use it constantly.</p>
+<table class="bt">
+<tr><th>Bits set to 1</th><th>Binary</th><th>Decimal</th><th>Block size (256 − value)</th></tr>
+<tr><td>0</td><td>00000000</td><td>0</td><td>256</td></tr>
+<tr><td>1</td><td>10000000</td><td>128</td><td>128</td></tr>
+<tr><td>2</td><td>11000000</td><td>192</td><td>64</td></tr>
+<tr><td>3</td><td>11100000</td><td>224</td><td>32</td></tr>
+<tr><td>4</td><td>11110000</td><td>240</td><td>16</td></tr>
+<tr><td>5</td><td>11111000</td><td>248</td><td>8</td></tr>
+<tr><td>6</td><td>11111100</td><td>252</td><td>4</td></tr>
+<tr><td>7</td><td>11111110</td><td>254</td><td>2</td></tr>
+<tr><td>8</td><td>11111111</td><td>255</td><td>1</td></tr>
+</table>
+<p>Each line adds the next bit value: 128, 128+64 = 192, 192+32 = 224, 224+16 = 240, and so on.</p>
+
+<h2>1.7 Powers of two</h2>
+<p>Subnetting questions are always “how many bits do I need for <i>x</i> things?” – i.e. find the smallest <i>n</i> with 2<sup>n</sup> ≥ <i>x</i>.</p>
+<table class="bt">
+<tr><th>Power</th><th>Value</th><th>Power</th><th>Value</th></tr>
+{{POW}}
+</table>
+<div class="box note"><b class="t">Practice before going further</b>Convert to binary: 255, 128, 192, 224, 10, 100, 33. Convert to decimal: 11110000, 00011111, 10000001, 01000000. (Answers: 11111111, 10000000, 11000000, 11100000, 00001010, 01100100, 00100001 / 240, 31, 129, 64.)</div>
+
+<!-- =================================================== -->
+<h1>2. Hexadecimal</h1>
+<p>Hexadecimal (base 16) uses 16 digits: 0–9 then A=10, B=11, C=12, D=13, E=14, F=15. Its great advantage: <b>one hex digit = exactly 4 bits</b> (a <i>nibble</i>), so conversion with binary is immediate. Hex is used for MAC addresses and <b>IPv6</b>.</p>
+<table class="bt">
+<tr><th>Dec</th><th>Hex</th><th>Binary</th><th>Dec</th><th>Hex</th><th>Binary</th></tr>
+<tr><td>0</td><td>0</td><td>0000</td><td>8</td><td>8</td><td>1000</td></tr>
+<tr><td>1</td><td>1</td><td>0001</td><td>9</td><td>9</td><td>1001</td></tr>
+<tr><td>2</td><td>2</td><td>0010</td><td>10</td><td>A</td><td>1010</td></tr>
+<tr><td>3</td><td>3</td><td>0011</td><td>11</td><td>B</td><td>1011</td></tr>
+<tr><td>4</td><td>4</td><td>0100</td><td>12</td><td>C</td><td>1100</td></tr>
+<tr><td>5</td><td>5</td><td>0101</td><td>13</td><td>D</td><td>1101</td></tr>
+<tr><td>6</td><td>6</td><td>0110</td><td>14</td><td>E</td><td>1110</td></tr>
+<tr><td>7</td><td>7</td><td>0111</td><td>15</td><td>F</td><td>1111</td></tr>
+</table>
+<p>Example: 172 = 1010 1100 → A C → <b>0xAC</b>. Back to decimal: A×16 + C = 10×16 + 12 = 172. Another: 0x3E = 0011 1110 = 3×16 + 14 = 62.</p>
+
+<!-- =================================================== -->
+<h1>3. The binary AND operation</h1>
+<p>A device finds the network an address belongs to by computing <b>address AND mask</b>, bit by bit. The rule is: the result is 1 <b>only if both bits are 1</b>.</p>
+<table class="bt" style="width:50%"><tr><th>A</th><th>B</th><th>A AND B</th></tr>
+<tr><td>0</td><td>0</td><td>0</td></tr><tr><td>0</td><td>1</td><td>0</td></tr><tr><td>1</td><td>0</td><td>0</td></tr><tr><td>1</td><td>1</td><td>1</td></tr></table>
+<p>Consequence: where the mask has 1s, the address bit is <b>kept</b>; where the mask has 0s, the bit becomes <b>0</b>. ANDing with 255 keeps an octet unchanged, ANDing with 0 erases it.</p>
+<h3>Example: in which network is 192.168.10.77 with mask 255.255.255.192 (/26)?</h3>
+<pre>Address  192.168.10.77    11000000.10101000.00001010.01001101
+Mask     255.255.255.192  11111111.11111111.11111111.11000000
+         ---------------------------------------------------- AND
+Network  192.168.10.64    11000000.10101000.00001010.01000000</pre>
+<p>Only the last octet needs work: 77 = 01001101, AND 11000000 → 01000000 = <b>64</b>. The network is <b>192.168.10.64</b>.</p>
+<div class="box note"><b class="t">Why it matters</b>When a host sends a packet, it ANDs its own address and the destination address with its mask. Same result → the destination is <b>local</b>, the packet is delivered directly (ARP). Different result → the destination is <b>remote</b>, the packet is sent to the <b>default gateway</b>.</div>
+
+<!-- =================================================== -->
+<h1>4. Structure of an IPv4 address</h1>
+<p>An IPv4 address (Internet Protocol version 4, RFC 791) is a <b>32-bit</b> number. It is written in <b>dotted-decimal notation</b>: four octets converted to decimal and separated by dots.</p>
+<pre>Decimal :      192   .    168   .     1    .    25
+Binary  :  11000000 . 10101000 . 00000001 . 00011001
+           |&lt;------------------- 32 bits -------------------&gt;|</pre>
+<ul>
+  <li>Total address space: 2<sup>32</sup> = <b>4,294,967,296</b> addresses.</li>
+  <li>Each address has two parts: the <span class="n">network portion</span> (identical for all devices of the same network, like a street name) and the <span class="h">host portion</span> (unique for each device in it, like a house number).</li>
+  <li>The boundary between the two parts is given by the <b>subnet mask</b> (chapter 8).</li>
+</ul>
+<pre>192.168.1.25 /24     <span class="n">11000000.10101000.00000001</span>.<span class="h">00011001</span>
+                     |&lt;------ network: 24 bits ------&gt;|&lt;host: 8&gt;|</pre>
+<div class="box warn"><b class="t">Invalid addresses</b><code>192.168.1.256</code> or <code>10.300.0.1</code> do not exist: an octet cannot exceed 255. Leading zeros (<code>192.168.001.010</code>) should be avoided – some software reads them as octal.</div>
+
+<!-- =================================================== -->
+<h1>5. Address classes (classful addressing)</h1>
+<p>From 1981 to 1993 the address space was divided into fixed <b>classes</b>. The class is identified by the <b>first bits</b> of the first octet. Classes are obsolete for routing (replaced by CIDR in 1993), but they are still used in vocabulary, in exams, and to define default masks.</p>
+<table>
+<tr><th>Class</th><th>First bits</th><th>First octet range</th><th>Default mask</th><th>Networks</th><th>Hosts per network</th><th>Use</th></tr>
+<tr><td><b>A</b></td><td>0xxxxxxx</td><td>1 – 126</td><td>255.0.0.0 (/8)</td><td>126</td><td>16,777,214</td><td>Very large networks</td></tr>
+<tr><td><b>B</b></td><td>10xxxxxx</td><td>128 – 191</td><td>255.255.0.0 (/16)</td><td>16,384</td><td>65,534</td><td>Medium networks</td></tr>
+<tr><td><b>C</b></td><td>110xxxxx</td><td>192 – 223</td><td>255.255.255.0 (/24)</td><td>2,097,152</td><td>254</td><td>Small networks</td></tr>
+<tr><td><b>D</b></td><td>1110xxxx</td><td>224 – 239</td><td>—</td><td colspan=2>Multicast groups</td><td>Multicast</td></tr>
+<tr><td><b>E</b></td><td>1111xxxx</td><td>240 – 255</td><td>—</td><td colspan=2>Reserved</td><td>Experimental</td></tr>
+</table>
+<p>Network 0 and network 127 are excluded from class A (0 = “this network”, 127 = loopback), hence 126 usable class A networks. Class B: 2<sup>14</sup> networks (16 bits minus the 2 fixed bits); class C: 2<sup>21</sup> networks.</p>
+<p>How to derive the ranges: class B starts with <code>10</code>, so the first octet goes from 10000000 (128) to 10111111 (191). Class C starts with <code>110</code>: 11000000 (192) to 11011111 (223).</p>
+<div class="box warn"><b class="t">Why classes were abandoned</b>A company needing 2,000 addresses was too big for a class C (254) and received a class B (65,534): 63,000 addresses wasted. This waste, and the explosion of routing tables, led to <b>CIDR</b> (Classless Inter-Domain Routing, RFC 1519, 1993): the mask can now have <b>any length</b>. Today, “classful” only means the default mask.</div>
+
+<!-- =================================================== -->
+<h1>6. Public, private and special addresses</h1>
+<h2>6.1 Public addresses</h2>
+<p>A <b>public</b> address is globally unique and routable on the Internet. Distribution is hierarchical:</p>
+<div class="flow">
+  <div class="s"><b>IANA</b><br>global pool</div><span>→</span>
+  <div class="s"><b>RIR</b> (5 regional registries)<br>AFRINIC, APNIC, ARIN,<br>LACNIC, RIPE NCC</div><span>→</span>
+  <div class="s"><b>LIR / ISP</b><br>operators</div><span>→</span>
+  <div class="s"><b>Customers</b><br>companies, homes</div>
+</div>
+<p>IANA allocated its last free /8 blocks in 2011; all RIRs have now exhausted or nearly exhausted their IPv4 pools. This <b>IPv4 exhaustion</b> is why we use private addresses with NAT (chapter 15), why ISPs use Carrier-Grade NAT, and why IPv6 exists (chapter 16). IPv4 blocks are now bought and sold on a transfer market.</p>
+
+<h2>6.2 Private addresses (RFC 1918)</h2>
+<p>Three ranges are reserved for internal use. Anyone can use them freely, in any number of organisations at the same time, but they are <b>never routed on the Internet</b>: to reach the Internet, they must be translated into a public address by <b>NAT</b>.</p>
+<table>
+<tr><th>Block</th><th>Range</th><th>Number of addresses</th><th>Classful equivalent</th></tr>
+<tr><td><b>10.0.0.0/8</b></td><td>10.0.0.0 – 10.255.255.255</td><td>16,777,216</td><td>1 class A</td></tr>
+<tr><td><b>172.16.0.0/12</b></td><td>172.16.0.0 – 172.31.255.255</td><td>1,048,576</td><td>16 class B</td></tr>
+<tr><td><b>192.168.0.0/16</b></td><td>192.168.0.0 – 192.168.255.255</td><td>65,536</td><td>256 class C</td></tr>
+</table>
+<div class="box err"><b class="t">Classic trap: 172.16.0.0/12</b>The /12 covers 172.<b>16</b> to 172.<b>31</b> only. Why? 16 = 0001<b>0000</b> and 31 = 0001<b>1111</b>: the first 4 bits of the second octet (0001) are fixed by the /12 (8 + 4 = 12). So <b>172.15.x.x</b> and <b>172.32.x.x</b> are <b>public</b> addresses.</div>
+
+<h2>6.3 Special-purpose addresses</h2>
+<table>
+<tr><th>Block</th><th>Name</th><th>Meaning</th></tr>
+<tr><td>0.0.0.0/8</td><td>“This network”</td><td>0.0.0.0 = no address yet (DHCP client source) or “all addresses” (default route 0.0.0.0/0, server listening on all interfaces).</td></tr>
+<tr><td>127.0.0.0/8</td><td>Loopback</td><td>The host itself; 127.0.0.1 = <i>localhost</i>. Packets never leave the machine.</td></tr>
+<tr><td>169.254.0.0/16</td><td>Link-local (APIPA)</td><td>Self-assigned when DHCP fails. Not routable.</td></tr>
+<tr><td>100.64.0.0/10</td><td>Shared address space</td><td>Carrier-Grade NAT between ISP and customer routers (RFC 6598).</td></tr>
+<tr><td>192.0.2.0/24, 198.51.100.0/24, 203.0.113.0/24</td><td>TEST-NET-1/2/3</td><td>Documentation and examples only (RFC 5737).</td></tr>
+<tr><td>198.18.0.0/15</td><td>Benchmarking</td><td>Network equipment performance tests.</td></tr>
+<tr><td>192.88.99.0/24</td><td>Deprecated</td><td>Formerly 6to4 relay anycast.</td></tr>
+<tr><td>224.0.0.0/4</td><td>Multicast</td><td>Former class D (e.g. 224.0.0.5 OSPF, 224.0.0.251 mDNS).</td></tr>
+<tr><td>240.0.0.0/4</td><td>Reserved</td><td>Former class E.</td></tr>
+<tr><td>255.255.255.255</td><td>Limited broadcast</td><td>All hosts of the local network; never forwarded by routers.</td></tr>
+</table>
+<p>In each subnet, two addresses are also reserved: the <b>network address</b> (all host bits at 0) and the <b>broadcast address</b> (all host bits at 1) – see chapter 9.</p>
+
+<!-- =================================================== -->
+<h1>7. Unicast, broadcast, multicast, anycast</h1>
+<table>
+<tr><th>Type</th><th>Recipients</th><th>Example</th></tr>
+<tr><td><b>Unicast</b></td><td>One single interface</td><td>192.168.1.25 – normal traffic</td></tr>
+<tr><td><b>Broadcast</b></td><td>All hosts of a network (IPv4 only)</td><td>192.168.1.255 (directed), 255.255.255.255 (limited) – ARP, DHCP Discover</td></tr>
+<tr><td><b>Multicast</b></td><td>Hosts that joined a group</td><td>224.0.0.0/4 – video streaming, routing protocols (OSPF 224.0.0.5)</td></tr>
+<tr><td><b>Anycast</b></td><td>The nearest of several hosts sharing the same address</td><td>8.8.8.8 and 1.1.1.1 are announced from many data centres; DNS root servers</td></tr>
+</table>
+<p>A <b>broadcast domain</b> is the set of hosts reached by a broadcast; routers stop broadcasts. Creating subnets (and VLANs) splits a big broadcast domain into smaller ones – one of the main reasons for subnetting.</p>
+
+<!-- =================================================== -->
+<h1>8. The subnet mask and CIDR notation</h1>
+<h2>8.1 The subnet mask</h2>
+<p>The mask is a 32-bit value with <b>1s for the network part and 0s for the host part</b>. The 1s are always contiguous and on the left.</p>
+<pre>255.255.255.0     <span class="n">11111111.11111111.11111111</span>.<span class="h">00000000</span>   → 24 network bits, 8 host bits
+255.255.240.0     <span class="n">11111111.11111111.1111</span><span class="h">0000.00000000</span>   → 20 network bits, 12 host bits
+255.255.255.252   <span class="n">11111111.11111111.11111111.111111</span><span class="h">00</span>   → 30 network bits, 2 host bits</pre>
+<p><code>255.255.0.255</code> or <code>255.255.255.64</code> are <b>invalid masks</b>: the 1s are not contiguous (64 = 01000000 is not in the table of section 1.6).</p>
+
+<h2>8.2 CIDR (prefix) notation</h2>
+<p>Instead of writing the mask, we write a slash followed by the <b>number of 1 bits</b>: 192.168.1.25 <b>/24</b> = mask 255.255.255.0. This number is called the <b>prefix length</b>.</p>
+<h3>Converting between the two</h3>
+<ul>
+  <li><b>/20 → mask</b>: 20 = 8 + 8 + 4 → 255 . 255 . (4 bits = 240) . 0 → <b>255.255.240.0</b>.</li>
+  <li><b>255.255.255.224 → prefix</b>: 8 + 8 + 8 + (224 = 3 bits) = <b>/27</b>.</li>
+  <li><b>/13 → mask</b>: 8 + 5 → 255 . (5 bits = 248) . 0 . 0 → <b>255.248.0.0</b>.</li>
+</ul>
+
+<h2>8.3 The two fundamental formulas</h2>
+<div class="box note">
+With <b>h</b> host bits (h = 32 − prefix):<br>
+&nbsp;&nbsp;• Number of addresses in the subnet = <b>2<sup>h</sup></b><br>
+&nbsp;&nbsp;• Number of usable hosts = <b>2<sup>h</sup> − 2</b> (minus the network address and the broadcast address)<br><br>
+When <b>s</b> bits are borrowed from the host part to create subnets:<br>
+&nbsp;&nbsp;• Number of subnets = <b>2<sup>s</sup></b>
+</div>
+<p>Examples: /24 → h = 8 → 256 addresses, 254 hosts. /26 → h = 6 → 64 addresses, 62 hosts. /30 → h = 2 → 4 addresses, 2 hosts (ideal for a link between two routers). /31 → 2 addresses, both usable on point-to-point links (RFC 3021). /32 → one single host (loopback interfaces, host routes).</p>
+<p>The complete CIDR table is in chapter 17.</p>
+
+<!-- =================================================== -->
+<h1>9. Network address, broadcast address and host range</h1>
+<p>For any address with its mask, you can compute four values:</p>
+<table>
+<tr><th>Value</th><th>Rule in binary</th></tr>
+<tr><td><b>Network address</b> (subnet ID)</td><td>All host bits set to <b>0</b> (= address AND mask)</td></tr>
+<tr><td><b>Broadcast address</b></td><td>All host bits set to <b>1</b></td></tr>
+<tr><td><b>First usable host</b></td><td>Network address + 1</td></tr>
+<tr><td><b>Last usable host</b></td><td>Broadcast address − 1</td></tr>
+</table>
+<h3>Worked example 1: 192.168.10.77/26</h3>
+<pre>Address    192.168.10.77    11000000.10101000.00001010.<span class="n">01</span><span class="h">001101</span>
+Mask /26   255.255.255.192  11111111.11111111.11111111.11000000
+Network    192.168.10.64    11000000.10101000.00001010.<span class="n">01</span><span class="h">000000</span>   host bits → 0
+Broadcast  192.168.10.127   11000000.10101000.00001010.<span class="n">01</span><span class="h">111111</span>   host bits → 1</pre>
+<p>Network <b>192.168.10.64</b>, first host <b>192.168.10.65</b>, last host <b>192.168.10.126</b>, broadcast <b>192.168.10.127</b>, 2<sup>6</sup> − 2 = <b>62</b> hosts.</p>
+
+<h3>Worked example 2: 172.16.45.200/20</h3>
+<p>/20 = 255.255.240.0. The first two octets are entirely network, the fourth entirely host. Only the 3rd octet is shared (“interesting octet”): 4 network bits + 4 host bits.</p>
+<pre>Address  {{B172}}
+3rd octet: 45 = <span class="n">0010</span><span class="h">1101</span>   → host bits to 0: <span class="n">0010</span>0000 = 32  ;  host bits to 1: <span class="n">0010</span>1111 = 47</pre>
+<p>Network <b>172.16.32.0</b>, broadcast <b>172.16.47.255</b> (the 4th octet is all host bits → 0 for the network, 255 for the broadcast), first host <b>172.16.32.1</b>, last host <b>172.16.47.254</b>, hosts = 2<sup>12</sup> − 2 = <b>4,094</b>.</p>
+
+<h3>Worked example 3: 10.45.123.77/13</h3>
+<p>/13 = 255.248.0.0. Interesting octet: the 2nd (5 network bits, 3 host bits).</p>
+<pre>Address  {{B10}}
+2nd octet: 45 = <span class="n">00101</span><span class="h">101</span>   → network: <span class="n">00101</span>000 = 40   broadcast: <span class="n">00101</span>111 = 47</pre>
+<p>Network <b>10.40.0.0</b>, broadcast <b>10.47.255.255</b>, hosts 10.40.0.1 – 10.47.255.254, 2<sup>19</sup> − 2 = <b>524,286</b> hosts.</p>
+
+<div class="box warn"><b class="t">An address ending in .0 or .255 is not always invalid</b>In 192.168.0.0/23 (192.168.0.0 – 192.168.1.255), the address 192.168.0.255 and 192.168.1.0 are <b>normal host addresses</b>. Only the first and last addresses of the whole block are reserved. Always calculate; never judge by the last octet alone.</div>
+
+<!-- =================================================== -->
+<h1>10. Subnetting (FLSM)</h1>
+<h2>10.1 What and why</h2>
+<p><b>Subnetting</b> means dividing one network into several smaller networks by <b>borrowing bits from the host part</b> and adding them to the network part. Reasons:</p>
+<ul>
+  <li>Reduce the size of <b>broadcast domains</b> (less broadcast traffic, better performance).</li>
+  <li><b>Security</b>: separate departments, servers, guests, IoT, and filter traffic between them on the router/firewall.</li>
+  <li>Use the address space <b>efficiently</b> and match the physical/logical organisation (buildings, floors, VLANs).</li>
+  <li>Easier administration and troubleshooting.</li>
+</ul>
+<p>In <b>FLSM</b> (Fixed Length Subnet Mask) all subnets have the same mask.</p>
+<pre>Before : 192.168.1.0 /24   <span class="n">11000000.10101000.00000001</span>.<span class="h">00000000</span>
+After  : /26               <span class="n">11000000.10101000.00000001</span>.<span class="s">00</span><span class="h">000000</span>
+                                     network (24)          subnet (2) host (6)</pre>
+
+<h2>10.2 The method, step by step</h2>
+<ol>
+  <li><b>Determine how many bits to borrow</b>: smallest <i>s</i> with 2<sup>s</sup> ≥ number of subnets needed – <i>or</i> smallest <i>h</i> with 2<sup>h</sup> − 2 ≥ hosts needed per subnet (then borrow the remaining bits).</li>
+  <li><b>New prefix</b> = old prefix + s. Write the new mask.</li>
+  <li><b>Block size</b> (increment) = 256 − value of the mask in the interesting octet (= 2<sup>number of host bits in that octet</sup>).</li>
+  <li><b>List the subnets</b>: start at the original network and add the block size each time.</li>
+  <li>For each subnet: first host = network + 1, broadcast = next network − 1, last host = broadcast − 1.</li>
+</ol>
+
+<h2>10.3 Example A – by number of subnets: 192.168.1.0/24 into 4 subnets</h2>
+<ol>
+  <li>4 subnets → 2<sup>2</sup> = 4 → borrow <b>s = 2</b> bits.</li>
+  <li>New prefix /24 + 2 = <b>/26</b> → mask 255.255.255.<b>192</b>.</li>
+  <li>Block size = 256 − 192 = <b>64</b>.</li>
+  <li>Subnets: .0, .64, .128, .192.</li>
+  <li>Hosts per subnet: 2<sup>6</sup> − 2 = 62.</li>
+</ol>
+{{FLSM1}}
+<p>In binary, the two borrowed bits take every combination 00, 01, 10, 11 → 0, 64, 128, 192.</p>
+
+<h2>10.4 Example B – by number of hosts: 50 hosts per subnet in 192.168.1.0/24</h2>
+<p>2<sup>5</sup> − 2 = 30 is too small; 2<sup>6</sup> − 2 = 62 ≥ 50 → keep <b>h = 6</b> host bits → prefix 32 − 6 = <b>/26</b>. Same result as example A: 4 subnets of 62 hosts.</p>
+
+<h2>10.5 Example C – 192.168.100.0/24 into 8 subnets</h2>
+<p>8 = 2<sup>3</sup> → borrow 3 bits → <b>/27</b> (255.255.255.224), block 32, 30 hosts each.</p>
+{{FLSM8}}
+
+<h2>10.6 Example D – class B: 172.16.0.0/16, 500 hosts per subnet</h2>
+<p>2<sup>9</sup> − 2 = 510 ≥ 500 → h = 9 → prefix <b>/23</b> → mask 255.255.<b>254</b>.0. Borrowed bits: 23 − 16 = 7 → 2<sup>7</sup> = <b>128 subnets</b>. The interesting octet is the 3rd, block size 256 − 254 = <b>2</b>: 172.16.0.0, 172.16.2.0, 172.16.4.0 …</p>
+{{FLSMB}}
+<p>Note how the host range crosses an octet boundary: 172.16.0.1 → 172.16.1.254 is one single subnet.</p>
+
+<h2>10.7 Example E – class A: 10.0.0.0/8 into 16 subnets</h2>
+<p>16 = 2<sup>4</sup> → /12 → mask 255.240.0.0, interesting octet the 2nd, block 16: 10.0.0.0, 10.16.0.0, 10.32.0.0 … 10.240.0.0. Each has 2<sup>20</sup> − 2 = 1,048,574 hosts.</p>
+{{FLSMA}}
+
+<div class="box note"><b class="t">Subnet zero and the all-ones subnet</b>Old textbooks (RFC 950) said the first subnet (all borrowed bits 0) and the last one (all 1) must not be used, giving 2<sup>s</sup> − 2 subnets. Since RFC 1878 (1995) and on all modern equipment (Cisco <code>ip subnet-zero</code> is on by default), <b>all 2<sup>s</sup> subnets are usable</b>. Use 2<sup>s</sup> unless an exam explicitly states otherwise.</div>
+
+<!-- =================================================== -->
+<h1>11. Fast subnetting: the “magic number” method</h1>
+<p>Once binary is understood, this mental method answers most questions in seconds, without writing 32 bits.</p>
+<ol>
+  <li>Find the <b>interesting octet</b>: the octet where the mask is neither 255 nor 0.</li>
+  <li><b>Magic number</b> (block size) = 256 − mask value in that octet.</li>
+  <li>Network: the largest <b>multiple of the magic number</b> that is ≤ the address value in the interesting octet. Octets to the right → 0.</li>
+  <li>Broadcast: next network − 1 in the interesting octet; octets to the right → 255.</li>
+</ol>
+<h3>Example: 200.15.7.99/29</h3>
+<ul>
+  <li>/29 = 255.255.255.248 → interesting octet = 4th, magic number = 256 − 248 = <b>8</b>.</li>
+  <li>Multiples of 8: … 88, <b>96</b>, 104 … → 99 falls in the block 96–103.</li>
+  <li>Network <b>200.15.7.96</b>, broadcast <b>200.15.7.103</b>, hosts .97 – .102 (6 hosts).</li>
+</ul>
+<h3>Example: 172.16.45.200/20 (again)</h3>
+<ul>
+  <li>255.255.240.0 → 3rd octet, magic number 16 → multiples 0, 16, <b>32</b>, 48 → 45 is in 32–47.</li>
+  <li>Network 172.16.32.0, broadcast 172.16.47.255. Same as the binary method, much faster.</li>
+</ul>
+<h3>Are two hosts in the same subnet?</h3>
+<p>192.168.1.62/26 and 192.168.1.65/26: block 64 → .62 is in 0–63, .65 is in 64–127 → <b>different subnets</b>; they need a router to communicate even though their addresses are “close”.</p>
+<div class="box tip"><b class="t">Quick reference: prefix ↔ magic number</b>
+<table class="bt" style="margin:4px 0">
+<tr><th>4th octet</th><td>/25: 128</td><td>/26: 64</td><td>/27: 32</td><td>/28: 16</td><td>/29: 8</td><td>/30: 4</td><td>/31: 2</td><td>/32: 1</td></tr>
+<tr><th>3rd octet</th><td>/17: 128</td><td>/18: 64</td><td>/19: 32</td><td>/20: 16</td><td>/21: 8</td><td>/22: 4</td><td>/23: 2</td><td>/24: 1</td></tr>
+<tr><th>2nd octet</th><td>/9: 128</td><td>/10: 64</td><td>/11: 32</td><td>/12: 16</td><td>/13: 8</td><td>/14: 4</td><td>/15: 2</td><td>/16: 1</td></tr>
+</table></div>
+
+<!-- =================================================== -->
+<h1>12. VLSM – Variable Length Subnet Masking</h1>
+<p>With FLSM, all subnets are the size of the largest need: a link between two routers (2 hosts) would consume a /26 of 62 addresses – 60 wasted. <b>VLSM</b> allows <b>a different mask for each subnet</b>, sized to its real need. It requires classless routing protocols (OSPF, EIGRP, RIPv2, BGP, static routes) – all modern ones.</p>
+<h2>12.1 The method</h2>
+<ol>
+  <li>List all needs (hosts per network, plus point-to-point links).</li>
+  <li><b>Sort them from largest to smallest</b> – essential to keep blocks aligned and avoid overlaps.</li>
+  <li>For each need, choose the smallest prefix with 2<sup>h</sup> − 2 ≥ hosts (remember to count the router interface/gateway as a host).</li>
+  <li>Allocate the first subnet at the start of the block; each next subnet starts right after the previous broadcast address.</li>
+  <li>Check that a subnet always starts on a multiple of its own block size.</li>
+</ol>
+<h2>12.2 Worked example</h2>
+<p>Address block <b>192.168.10.0/24</b>. Needs: LAN A 100 hosts, LAN B 50, LAN C 25, LAN D 10, three WAN links between routers (2 hosts each).</p>
+{{VLSM1}}
+<p>Detail of choices: 100 → 2<sup>7</sup> − 2 = 126 → /25; 50 → 62 → /26; 25 → 30 → /27; 10 → 14 → /28; 2 → 2 → /30. Remaining free: 192.168.10.252/30 for future use. In FLSM with /25 masks we could have created only 2 networks; VLSM fits 7 networks in the same /24.</p>
+<div class="box err"><b class="t">Overlap: the classic VLSM mistake</b>If you allocate small subnets first (e.g. 192.168.10.0/30), then try to place a /25 at 192.168.10.0, the two overlap. A /25 can only start at .0 or .128, a /26 at .0/.64/.128/.192, etc. Sorting from largest to smallest guarantees correct alignment.</div>
+
+<!-- =================================================== -->
+<h1>13. Supernetting and route summarization</h1>
+<h2>13.1 Principle</h2>
+<p><b>Supernetting</b> is the opposite of subnetting: several contiguous networks are combined into one larger network by <b>shortening the prefix</b> (moving bits from the network part back to the host part). Used for:</p>
+<ul>
+  <li><b>Route summarization (aggregation)</b>: a router advertises one route instead of many → smaller routing tables, less CPU and memory, faster convergence, and instabilities of a small network are hidden from the rest.</li>
+  <li><b>CIDR allocation</b>: an ISP gives a customer who needs 1,000 addresses a <b>/22</b> (1,024 addresses) instead of four separate class C networks.</li>
+</ul>
+
+<h2>13.2 Method: find the common bits</h2>
+<ol>
+  <li>Write the networks in binary (only the octet that differs is needed).</li>
+  <li>Count the <b>left-most bits common</b> to all of them → that is the summary prefix.</li>
+  <li>Summary address = common bits followed by zeros.</li>
+  <li>Verify that the summary does not include networks that are not yours.</li>
+</ol>
+<h3>Example 1 – 192.168.0.0/24 to 192.168.3.0/24</h3>
+<pre>192.168.0.0   11000000.10101000.<span class="n">000000</span><span class="h">00</span>.00000000
+192.168.1.0   11000000.10101000.<span class="n">000000</span><span class="h">01</span>.00000000
+192.168.2.0   11000000.10101000.<span class="n">000000</span><span class="h">10</span>.00000000
+192.168.3.0   11000000.10101000.<span class="n">000000</span><span class="h">11</span>.00000000
+              |&lt;-------- 22 common bits --------&gt;|</pre>
+<p>Summary: <b>192.168.0.0/22</b> (mask 255.255.252.0), covering exactly 192.168.0.0 – 192.168.3.255.</p>
+<h3>Example 2 – 172.16.12.0/24 to 172.16.15.0/24</h3>
+<pre>12 = <span class="n">000011</span>00    13 = <span class="n">000011</span>01    14 = <span class="n">000011</span>10    15 = <span class="n">000011</span>11</pre>
+<p>16 + 6 = 22 common bits → <b>172.16.12.0/22</b>.</p>
+<h3>Example 3 – 10.1.64.0/24 to 10.1.127.0/24 (64 networks)</h3>
+<p>64 = <span class="n">01</span>000000, 127 = <span class="n">01</span>111111 → 16 + 2 = 18 common bits → <b>10.1.64.0/18</b>. One route replaces 64.</p>
+<h3>Example 4 – two /25 into a /24</h3>
+<p>198.51.100.0/25 + 198.51.100.128/25 → 198.51.100.0/24.</p>
+
+<h2>13.3 Rules and traps</h2>
+<ul>
+  <li>The number of networks summarized exactly is always a <b>power of two</b> (2, 4, 8, 16…).</li>
+  <li>The first network must be a <b>multiple of that number</b> in the interesting octet (4 networks → start at 0, 4, 8, 12…; 8 networks → 0, 8, 16…).</li>
+</ul>
+<div class="box err"><b class="t">Non-aligned networks: 192.168.1.0/24 to 192.168.4.0/24</b>
+1 = 00000<b>001</b>, 2 = 00000<b>010</b>, 3 = 00000<b>011</b>, 4 = 00000<b>100</b>: only 21 bits in common → 192.168.0.0/21, which also covers 192.168.0.0, .5.0, .6.0 and .7.0 – networks that may belong to someone else (<b>over-summarization</b>, causing traffic to be black-holed). The exact minimum summary is three routes: <b>192.168.1.0/24</b>, <b>192.168.2.0/23</b>, <b>192.168.4.0/24</b>.</div>
+<h3>Quick method without binary</h3>
+<p>Count the networks (N), round up to a power of two 2<sup>k</sup>, the summary prefix is <i>old prefix − k</i>; check that the first network is a multiple of 2<sup>k</sup>. Example: 8 networks 10.0.8.0/24 … 10.0.15.0/24 → 2<sup>3</sup> → /24 − 3 = /21; 8 is a multiple of 8 ✓ → <b>10.0.8.0/21</b>.</p>
+
+<!-- =================================================== -->
+<h1>14. Wildcard masks</h1>
+<p>A <b>wildcard mask</b> is the inverse of the subnet mask: <b>0 = this bit must match, 1 = any value</b>. Used in Cisco ACLs and in OSPF/EIGRP <code>network</code> statements.</p>
+<p>Calculation: <b>255.255.255.255 − subnet mask</b>.</p>
+<table>
+<tr><th>Prefix</th><th>Subnet mask</th><th>Wildcard</th></tr>
+<tr><td>/24</td><td>255.255.255.0</td><td>0.0.0.255</td></tr>
+<tr><td>/27</td><td>255.255.255.224</td><td>0.0.0.31</td></tr>
+<tr><td>/20</td><td>255.255.240.0</td><td>0.0.15.255</td></tr>
+<tr><td>/21</td><td>255.255.248.0</td><td>0.0.7.255</td></tr>
+<tr><td>/32 (one host)</td><td>255.255.255.255</td><td>0.0.0.0 (keyword <code>host</code>)</td></tr>
+<tr><td>/0 (everything)</td><td>0.0.0.0</td><td>255.255.255.255 (keyword <code>any</code>)</td></tr>
+</table>
+<pre>access-list 10 permit 192.168.10.64 0.0.0.63        ! the /26 192.168.10.64 – .127
+router ospf 1
+ network 10.1.64.0 0.0.63.255 area 0                 ! the /18 10.1.64.0</pre>
+
+<!-- =================================================== -->
+<h1>15. NAT and PAT</h1>
+<p><b>NAT</b> (Network Address Translation, RFC 3022) lets hosts with private addresses reach the Internet: the router replaces the private source address with a public one and remembers the mapping to translate replies back.</p>
+<table>
+<tr><th>Type</th><th>Principle</th><th>Use</th></tr>
+<tr><td>Static NAT</td><td>1 private ↔ 1 public, permanent</td><td>Publishing an internal server</td></tr>
+<tr><td>Dynamic NAT</td><td>Private addresses take a free public address from a pool</td><td>Rare today</td></tr>
+<tr><td><b>PAT / NAT overload</b></td><td>Many private addresses share <b>one</b> public address, distinguished by the <b>source port</b></td><td>Every home box and most companies</td></tr>
+<tr><td>Port forwarding</td><td>Public IP:port → private IP:port</td><td>Hosting a game/web server at home</td></tr>
+<tr><td>CGNAT</td><td>The ISP itself does NAT (100.64.0.0/10 between ISP and customer)</td><td>Mobile networks, ISPs short of IPv4</td></tr>
+</table>
+<pre>Inside 192.168.1.25:51000  ─┐                         ┌─→ 93.184.215.14:443
+Inside 192.168.1.30:51000  ─┼─ Router PAT 203.0.113.7 ┤   (seen as 203.0.113.7:40001
+Inside 192.168.1.40:62000  ─┘   translation table     └─    203.0.113.7:40002 …)</pre>
+<p>Terminology (Cisco): <i>inside local</i> = private address of the host, <i>inside global</i> = public address representing it, <i>outside global</i> = address of the remote server. Drawbacks of NAT: breaks end-to-end connectivity, complicates incoming connections, VoIP and some VPN protocols – IPv6 removes the need for it.</p>
+<p>To know your public address: <code>curl ifconfig.me</code> (Linux) or <code>curl.exe ifconfig.me</code> (Windows) – compare it with <code>ipconfig</code>/<code>ip a</code> which shows the private address.</p>
+
+<!-- =================================================== -->
+<h1>16. IPv6 addressing</h1>
+<h2>16.1 Format</h2>
+<p>IPv6 (RFC 8200) uses <b>128-bit</b> addresses: 2<sup>128</sup> ≈ 3.4 × 10<sup>38</sup> addresses. They are written as <b>8 groups of 4 hexadecimal digits</b> (16 bits each, called <i>hextets</i>) separated by colons.</p>
+<pre>2001:0db8:0000:0000:0000:ff00:0042:8329</pre>
+<h3>Abbreviation rules (RFC 5952)</h3>
+<ol>
+  <li><b>Leading zeros</b> of each group may be removed: <code>0db8 → db8</code>, <code>0042 → 42</code>, <code>0000 → 0</code>.</li>
+  <li><b>One</b> sequence of consecutive all-zero groups may be replaced by <code>::</code> – only once per address (otherwise the length would be ambiguous). Replace the longest run; if two runs are equal, the left-most one.</li>
+  <li>Use lowercase letters.</li>
+</ol>
+<pre>2001:0db8:0000:0000:0000:ff00:0042:8329  →  2001:db8::ff00:42:8329
+2001:0db8:0000:0000:0001:0000:0000:0001  →  2001:db8::1:0:0:1        (left-most run compressed)
+0000:0000:0000:0000:0000:0000:0000:0001  →  ::1                      (loopback)
+fe80::1   expanded  →  fe80:0000:0000:0000:0000:0000:0000:0001</pre>
+<p>To expand: count the groups present, the <code>::</code> stands for as many 0000 groups as needed to reach 8.</p>
+
+<h2>16.2 Structure of a global unicast address</h2>
+<pre>|&lt;--- 48 bits ---&gt;|&lt;- 16 bits -&gt;|&lt;---------- 64 bits ----------&gt;|
+  Global routing      Subnet ID          Interface ID
+  prefix (from ISP)   (your subnets)     (identifies the host)
+  2001:db8:abcd    :    0012       :  3e52:82ff:fe1a:4f9e</pre>
+<p>A LAN in IPv6 is <b>always a /64</b>. A site usually receives a <b>/48</b> (or /56 for homes), leaving 16 bits (or 8) for subnets: 65,536 subnets of 2<sup>64</sup> hosts each. Subnetting IPv6 is therefore simple: you just increment the subnet ID in hex: 2001:db8:abcd:<b>0000</b>::/64, 2001:db8:abcd:<b>0001</b>::/64 … 2001:db8:abcd:<b>ffff</b>::/64.</p>
+
+<h2>16.3 Address types</h2>
+<table>
+<tr><th>Prefix</th><th>Type</th><th>IPv4 equivalent</th></tr>
+<tr><td>2000::/3</td><td><b>Global unicast</b> (public, routable)</td><td>Public addresses</td></tr>
+<tr><td>fe80::/10</td><td><b>Link-local</b> – automatically present on every IPv6 interface, used for neighbour discovery and routing protocols</td><td>169.254.0.0/16 (but always present)</td></tr>
+<tr><td>fc00::/7 (in practice fd00::/8)</td><td><b>Unique local</b> (ULA) – internal, not routed on the Internet</td><td>RFC 1918 private</td></tr>
+<tr><td>ff00::/8</td><td><b>Multicast</b> (ff02::1 all nodes, ff02::2 all routers)</td><td>224.0.0.0/4</td></tr>
+<tr><td>::1/128</td><td>Loopback</td><td>127.0.0.1</td></tr>
+<tr><td>::/128</td><td>Unspecified</td><td>0.0.0.0</td></tr>
+<tr><td>::/0</td><td>Default route</td><td>0.0.0.0/0</td></tr>
+<tr><td>2001:db8::/32</td><td>Documentation</td><td>192.0.2.0/24 etc.</td></tr>
+<tr><td>::ffff:0:0/96</td><td>IPv4-mapped (::ffff:192.0.2.1)</td><td>—</td></tr>
+</table>
+<p>There is <b>no broadcast</b> in IPv6: it is replaced by multicast. <b>Anycast</b> addresses are normal unicast addresses assigned to several devices.</p>
+
+<h2>16.4 How hosts get an IPv6 address</h2>
+<ul>
+  <li><b>SLAAC</b> (Stateless Address Autoconfiguration): the router sends a <i>Router Advertisement</i> with the /64 prefix; the host builds its interface ID itself (random, for privacy – RFC 8981 – or with EUI-64).</li>
+  <li><b>DHCPv6</b>: stateful (server assigns addresses) or stateless (only DNS info, address by SLAAC).</li>
+  <li><b>Static</b> configuration.</li>
+</ul>
+<h3>EUI-64 example: MAC 3c:52:82:1a:4f:9e</h3>
+<ol>
+  <li>Split the MAC in two halves: 3c5282 | 1a4f9e.</li>
+  <li>Insert <code>fffe</code> in the middle: 3c5282<b>fffe</b>1a4f9e.</li>
+  <li>Invert the 7th bit (U/L bit) of the first byte: 3c = 0011 11<b>0</b>0 → 0011 11<b>1</b>0 = <b>3e</b>.</li>
+  <li>Interface ID: <b>3e52:82ff:fe1a:4f9e</b> → link-local fe80::3e52:82ff:fe1a:4f9e.</li>
+</ol>
+
+<!-- =================================================== -->
+<h1>17. Reference tables</h1>
+<h2>17.1 Complete CIDR table (/8 to /32)</h2>
+<div class="small">
+<table>
+<tr><th class=c>Prefix</th><th>Subnet mask</th><th>Wildcard</th><th>Addresses</th><th>Usable hosts</th></tr>
+{{CIDR}}
+</table></div>
+
+<h2>17.2 Choosing a prefix from a number of hosts</h2>
+<table>
+<tr><th>Hosts needed</th><th>Host bits</th><th>Prefix</th><th>Usable</th></tr>
+<tr><td>2</td><td>2</td><td>/30</td><td>2</td></tr>
+<tr><td>3 – 6</td><td>3</td><td>/29</td><td>6</td></tr>
+<tr><td>7 – 14</td><td>4</td><td>/28</td><td>14</td></tr>
+<tr><td>15 – 30</td><td>5</td><td>/27</td><td>30</td></tr>
+<tr><td>31 – 62</td><td>6</td><td>/26</td><td>62</td></tr>
+<tr><td>63 – 126</td><td>7</td><td>/25</td><td>126</td></tr>
+<tr><td>127 – 254</td><td>8</td><td>/24</td><td>254</td></tr>
+<tr><td>255 – 510</td><td>9</td><td>/23</td><td>510</td></tr>
+<tr><td>511 – 1,022</td><td>10</td><td>/22</td><td>1,022</td></tr>
+<tr><td>1,023 – 2,046</td><td>11</td><td>/21</td><td>2,046</td></tr>
+<tr><td>2,047 – 4,094</td><td>12</td><td>/20</td><td>4,094</td></tr>
+</table>
+
+<h2>17.3 Common mistakes checklist</h2>
+<ul>
+  <li>Forgetting the −2 (network and broadcast) when counting hosts.</li>
+  <li>Forgetting that the router (gateway) also needs an address in each subnet.</li>
+  <li>Thinking 172.32.x.x is private (only 172.16–172.31 is).</li>
+  <li>Judging an address invalid because it ends in .0 or .255 without computing the subnet.</li>
+  <li>Using a non-contiguous mask (255.255.255.64).</li>
+  <li>Not sorting needs from largest to smallest in VLSM → overlapping subnets.</li>
+  <li>Summarizing a range that is not a power of two or not aligned → over-summarization.</li>
+  <li>Using <code>::</code> twice in an IPv6 address.</li>
+</ul>
+
+<!-- =================================================== -->
+<h1>18. Exercises</h1>
+<h3>Part A – Binary</h3>
+<ol>
+  <li>Convert to binary: 200, 99, 7, 255.</li>
+  <li>Convert to decimal: 10110111, 01111111, 11100000.</li>
+  <li>Convert 0xC0 and 0xFE to decimal and binary.</li>
+</ol>
+<h3>Part B – Address types</h3>
+<ol start="4">
+  <li>For each address, give the class and say whether it is public, private or special: 10.20.30.40 · 172.32.1.1 · 172.31.0.9 · 192.168.300.1 · 169.254.10.5 · 100.70.1.1 · 8.8.8.8 · 224.0.0.5 · 127.0.0.53.</li>
+</ol>
+<h3>Part C – Network calculations</h3>
+<ol start="5">
+  <li>192.168.50.130/27: mask, network, broadcast, host range, number of hosts.</li>
+  <li>172.20.99.14/19: same questions.</li>
+  <li>10.200.17.5/10: same questions.</li>
+  <li>Is 192.168.1.255/23 a valid host address? And 192.168.1.0/23?</li>
+  <li>Are 192.168.1.62/26 and 192.168.1.65/26 in the same subnet?</li>
+</ol>
+<h3>Part D – Subnetting and VLSM</h3>
+<ol start="10">
+  <li>Divide 192.168.100.0/24 into 8 equal subnets. Give the prefix and the list of networks.</li>
+  <li>What is the smallest prefix for: 300 hosts? 2 hosts? 1,000 hosts? 14 hosts?</li>
+  <li>VLSM: with 10.10.0.0/24, address a Sales LAN (60 hosts), a Tech LAN (28), an Admin LAN (12) and a router-to-router link.</li>
+</ol>
+<h3>Part E – Supernetting, wildcards, IPv6</h3>
+<ol start="13">
+  <li>Summarize 172.16.32.0/24, 172.16.33.0/24, 172.16.34.0/24, 172.16.35.0/24.</li>
+  <li>Summarize 10.0.8.0/24 through 10.0.15.0/24.</li>
+  <li>Give the wildcard mask of /27 and of 255.255.248.0.</li>
+  <li>Compress 2001:0db8:0000:0000:0001:0000:0000:0001. Expand fe80::1.</li>
+</ol>
+
+<h1>Answers</h1>
+<div class="ans">
+<p><b>1.</b> 200 = 11001000 (128+64+8) · 99 = 01100011 (64+32+2+1) · 7 = 00000111 · 255 = 11111111.</p>
+<p><b>2.</b> 10110111 = 128+32+16+4+2+1 = 183 · 01111111 = 127 · 11100000 = 224.</p>
+<p><b>3.</b> 0xC0 = 12×16 = 192 = 11000000 · 0xFE = 15×16+14 = 254 = 11111110.</p>
+<p><b>4.</b> 10.20.30.40: class A, <b>private</b> · 172.32.1.1: class B, <b>public</b> (outside 172.16–31) · 172.31.0.9: class B, private · 192.168.300.1: <b>invalid</b> (300 &gt; 255) · 169.254.10.5: class B range, <b>link-local/APIPA</b> · 100.70.1.1: class A range, <b>shared CGNAT space</b> 100.64.0.0/10 · 8.8.8.8: class A, public · 224.0.0.5: class D, <b>multicast</b> (OSPF) · 127.0.0.53: <b>loopback</b> (used by systemd-resolved).</p>
+<p><b>5.</b> /27 = 255.255.255.224, block 32; 130 is in 128–159 → network 192.168.50.128, broadcast 192.168.50.159, hosts .129 – .158, 30 hosts.</p>
+<p><b>6.</b> /19 = 255.255.224.0, 3rd octet, block 32; 99 is in 96–127 → network 172.20.96.0, broadcast 172.20.127.255, hosts 172.20.96.1 – 172.20.127.254, 2<sup>13</sup> − 2 = 8,190 hosts.</p>
+<p><b>7.</b> /10 = 255.192.0.0, 2nd octet, block 64; 200 is in 192–255 → network 10.192.0.0, broadcast 10.255.255.255, hosts 10.192.0.1 – 10.255.255.254, 2<sup>22</sup> − 2 = 4,194,302 hosts.</p>
+<p><b>8.</b> /23 → block 2 in the 3rd octet → subnet 192.168.0.0 – 192.168.1.255. 192.168.1.255 is the <b>broadcast</b> → not a valid host. 192.168.1.0 is in the middle of the range → <b>valid host</b>.</p>
+<p><b>9.</b> No: block 64 → .62 belongs to 192.168.1.0/26, .65 to 192.168.1.64/26.</p>
+<p><b>10.</b> 8 = 2<sup>3</sup> → /27 (255.255.255.224), block 32: .0, .32, .64, .96, .128, .160, .192, .224 (see table in 10.5).</p>
+<p><b>11.</b> 300 → /23 (510) · 2 → /30 (or /31 on a point-to-point link) · 1,000 → /22 (1,022) · 14 → /28 (exactly 14).</p>
+<p><b>12.</b> Sorted from largest to smallest:</p>
+{{VLSM2}}
+<p><b>13.</b> 32 = 001000<b>00</b> … 35 = 001000<b>11</b> → 22 common bits → <b>172.16.32.0/22</b>.</p>
+<p><b>14.</b> 8 networks, first = 8 (multiple of 8) → /24 − 3 = <b>10.0.8.0/21</b>.</p>
+<p><b>15.</b> /27 → 0.0.0.31 · 255.255.248.0 → 0.0.7.255.</p>
+<p><b>16.</b> 2001:db8::1:0:0:1 (two runs of two zero groups: the left-most is compressed, and :: is used only once) · fe80:0000:0000:0000:0000:0000:0000:0001.</p>
+</div>
+
+<div class="box tip" style="margin-top:18px"><b class="t">Check your work with tools</b>Linux: <code>ipcalc 172.16.45.200/20</code> or <code>sipcalc</code>. Python: <code>python3 -c "import ipaddress as i; n=i.ip_interface('172.16.45.200/20').network; print(n, n.broadcast_address, n.num_addresses-2)"</code>. Windows PowerShell has no built-in calculator, but Python or online subnet calculators work. Use them to <b>verify</b>, never to replace understanding – exams and real troubleshooting require mental calculation.</div>
+
+</body>
+</html>
